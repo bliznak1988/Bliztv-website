@@ -1,12 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>BLiZ TV - Internet TV</title>
 
 <style>
+
+/* =====================================================
+   GENERAL
+===================================================== */
+
 *{
     box-sizing:border-box;
     margin:0;
@@ -14,10 +25,15 @@
 }
 
 :root{
+
     --bg:#02063b;
+
     --green:#55ff79;
+
     --cyan:#00eaff;
+
     --text:#f4fbff;
+
     --muted:#b8c9e8;
 }
 
@@ -26,60 +42,93 @@ html{
 }
 
 body{
-    font-family:Arial,Helvetica,sans-serif;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
     color:var(--text);
+
     min-height:100vh;
+
     overflow-x:hidden;
 
     background:
+
         radial-gradient(
             circle at 50% 5%,
             rgba(0,238,255,.14),
             transparent 28%
         ),
+
         radial-gradient(
             circle at 50% 45%,
             rgba(48,255,111,.08),
             transparent 40%
         ),
+
         #02063b;
 }
 
 .container{
-    width:min(1120px,92%);
+
+    width:min(
+        1120px,
+        92%
+    );
+
     margin:auto;
 }
 
-/* =========================
+
+/* =====================================================
    LANGUAGE BUTTONS
-========================= */
+===================================================== */
 
 header{
+
     position:relative;
+
     text-align:center;
+
     padding-top:20px;
 }
 
 .lang{
+
     position:absolute;
+
     top:18px;
+
     right:0;
+
     display:flex;
+
     gap:7px;
+
     z-index:100;
 }
 
 .lang button{
+
     width:44px;
+
     height:36px;
 
-    border:1px solid rgba(95,255,160,.35);
+    border:
+        1px solid
+        rgba(95,255,160,.35);
+
     border-radius:12px;
 
-    background:rgba(4,14,65,.9);
+    background:
+        rgba(4,14,65,.9);
+
     color:#fff;
 
     cursor:pointer;
+
     font-size:20px;
 
     transition:.25s;
@@ -87,50 +136,64 @@ header{
 
 .lang button:hover,
 .lang button.active{
-    border-color:var(--green);
+
+    border-color:
+        var(--green);
 
     box-shadow:
-        0 0 18px rgba(85,255,121,.4);
+        0 0 18px
+        rgba(85,255,121,.4);
 
-    transform:translateY(-2px);
+    transform:
+        translateY(-2px);
 }
 
-/* =========================
+
+/* =====================================================
    LOGO
-========================= */
+===================================================== */
 
 .logo-stage{
+
     height:300px;
 
     display:grid;
+
     place-items:center;
 
     position:relative;
 }
 
 .logo-wrap{
+
     position:relative;
 
     width:280px;
+
     height:280px;
 
     display:grid;
+
     place-items:center;
 }
+
 
 /* glow behind logo */
 
 .logo-wrap::before{
+
     content:"";
 
     position:absolute;
 
     width:270px;
+
     height:270px;
 
     border-radius:50%;
 
     background:
+
         radial-gradient(
             circle,
             rgba(0,238,255,.25),
@@ -138,106 +201,4 @@ header{
             transparent 70%
         );
 
-    filter:blur(12px);
-
-    animation:aura 3s ease-in-out infinite;
-}
-
-/* animated ring */
-
-.logo-wrap::after{
-    content:"";
-
-    position:absolute;
-
-    width:265px;
-    height:265px;
-
-    border-radius:50%;
-
-    border:
-        2px solid rgba(0,234,255,.45);
-
-    border-right-color:transparent;
-    border-bottom-color:rgba(85,255,121,.55);
-
-    animation:rotateRing 7s linear infinite;
-
-    box-shadow:
-        0 0 20px rgba(0,234,255,.2),
-        inset 0 0 20px rgba(85,255,121,.1);
-}
-
-/* actual logo */
-
-.logo{
-    width:245px;
-    max-width:80vw;
-
-    position:relative;
-    z-index:5;
-
-    border-radius:20px;
-
-    animation:
-        logoFloat 3s ease-in-out infinite,
-        logoGlow 3s ease-in-out infinite;
-
-    filter:
-        drop-shadow(
-            0 0 18px rgba(0,255,200,.45)
-        );
-}
-
-/* logo floating */
-
-@keyframes logoFloat{
-
-    0%,100%{
-        transform:translateY(0) scale(1);
-    }
-
-    50%{
-        transform:translateY(-10px) scale(1.025);
-    }
-}
-
-/* logo glow */
-
-@keyframes logoGlow{
-
-    0%,100%{
-        filter:
-            drop-shadow(
-                0 0 15px rgba(0,255,200,.35)
-            );
-    }
-
-    50%{
-        filter:
-            drop-shadow(
-                0 0 32px rgba(0,255,200,.8)
-            );
-    }
-}
-
-/* aura */
-
-@keyframes aura{
-
-    0%,100%{
-        transform:scale(.82);
-        opacity:.45;
-    }
-
-    50%{
-        transform:scale(1.12);
-        opacity:.95;
-    }
-}
-
-/* ring rotation */
-
-@keyframes rotateRing{
-
-    from
+    filter:blur
