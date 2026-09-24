@@ -7,346 +7,686 @@
 
 <style>
 *{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
 :root{
-  --bg:#02063b;
-  --green:#55ff79;
-  --cyan:#00eaff;
-  --text:#f4fbff;
-  --muted:#b8c9e8;
+    --bg:#02063b;
+    --green:#55ff79;
+    --cyan:#00eaff;
+    --text:#f4fbff;
+    --muted:#b8c9e8;
+}
+
+html{
+    scroll-behavior:smooth;
 }
 
 body{
-  font-family:Arial,Helvetica,sans-serif;
-  color:var(--text);
-  background:
-    radial-gradient(circle at 50% 5%,rgba(0,238,255,.12),transparent 28%),
-    radial-gradient(circle at 50% 45%,rgba(48,255,111,.08),transparent 38%),
-    var(--bg);
-  min-height:100vh;
-  overflow-x:hidden;
+    font-family:Arial,Helvetica,sans-serif;
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+
+    background:
+        radial-gradient(circle at 50% 5%,rgba(0,238,255,.14),transparent 28%),
+        radial-gradient(circle at 50% 45%,rgba(48,255,111,.08),transparent 40%),
+        var(--bg);
 }
 
 .container{
-  width:min(1120px,92%);
-  margin:auto;
+    width:min(1120px,92%);
+    margin:auto;
 }
 
-/* LANGUAGE BUTTONS */
+/* =========================
+   LANGUAGE
+========================= */
+
+header{
+    position:relative;
+    text-align:center;
+    padding-top:20px;
+}
+
 .lang{
-  position:absolute;
-  right:0;
-  top:18px;
-  display:flex;
-  gap:7px;
-  z-index:20;
+    position:absolute;
+    top:18px;
+    right:0;
+    display:flex;
+    gap:7px;
+    z-index:50;
 }
 
 .lang button{
-  cursor:pointer;
-  border:1px solid rgba(95,255,160,.35);
-  background:rgba(4,14,65,.85);
-  color:#fff;
-  border-radius:12px;
-  width:44px;
-  height:36px;
-  font-size:20px;
-  transition:.2s;
+    width:44px;
+    height:36px;
+    border:1px solid rgba(95,255,160,.35);
+    border-radius:12px;
+    background:rgba(4,14,65,.9);
+    color:#fff;
+    cursor:pointer;
+    font-size:20px;
+    transition:.25s;
 }
 
 .lang button:hover,
 .lang button.active{
-  border-color:var(--green);
-  box-shadow:0 0 18px rgba(85,255,121,.35);
-  transform:translateY(-2px);
+    border-color:var(--green);
+    box-shadow:0 0 18px rgba(85,255,121,.4);
+    transform:translateY(-2px);
 }
 
-/* HEADER */
-header{
-  position:relative;
-  text-align:center;
-  padding-top:20px;
-}
+/* =========================
+   LOGO
+========================= */
 
-/* LOGO */
 .logo-stage{
-  height:300px;
-  display:grid;
-  place-items:center;
+    height:310px;
+    display:grid;
+    place-items:center;
+    position:relative;
+}
+
+.logo-wrap{
+    position:relative;
+    width:290px;
+    height:290px;
+    display:grid;
+    place-items:center;
+}
+
+.logo-wrap::before{
+    content:"";
+    position:absolute;
+    width:270px;
+    height:270px;
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(0,238,255,.25),
+            rgba(85,255,121,.12) 40%,
+            transparent 70%
+        );
+
+    filter:blur(12px);
+    animation:aura 3s ease-in-out infinite;
+}
+
+.logo-wrap::after{
+    content:"";
+    position:absolute;
+    width:270px;
+    height:270px;
+    border-radius:50%;
+
+    border:2px solid rgba(0,234,255,.45);
+    border-right-color:transparent;
+    border-bottom-color:rgba(85,255,121,.65);
+
+    box-shadow:
+        0 0 20px rgba(0,234,255,.2),
+        inset 0 0 20px rgba(85,255,121,.1);
+
+    animation:rotateRing 7s linear infinite;
 }
 
 .logo{
-  width:270px;
-  max-width:75vw;
-  border-radius:20px;
-  filter:drop-shadow(0 0 20px rgba(0,255,200,.4));
-  animation:float 3s ease-in-out infinite;
+    width:245px;
+    max-width:78vw;
+    position:relative;
+    z-index:5;
+    border-radius:20px;
+
+    animation:
+        logoFloat 3s ease-in-out infinite,
+        logoGlow 3s ease-in-out infinite;
 }
 
-@keyframes float{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-9px);}
+@keyframes logoFloat{
+    0%,100%{
+        transform:translateY(0) scale(1);
+    }
+
+    50%{
+        transform:translateY(-10px) scale(1.025);
+    }
 }
 
-/* HERO */
+@keyframes logoGlow{
+    0%,100%{
+        filter:drop-shadow(0 0 15px rgba(0,255,200,.35));
+    }
+
+    50%{
+        filter:drop-shadow(0 0 32px rgba(0,255,200,.8));
+    }
+}
+
+@keyframes aura{
+    0%,100%{
+        transform:scale(.82);
+        opacity:.45;
+    }
+
+    50%{
+        transform:scale(1.12);
+        opacity:.95;
+    }
+}
+
+@keyframes rotateRing{
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* =========================
+   HERO
+========================= */
+
 .hero{
-  text-align:center;
-  padding:10px 0 50px;
+    text-align:center;
+    padding:15px 0 55px;
 }
 
-h1{
-  font-size:clamp(42px,7vw,76px);
-  letter-spacing:2px;
-  color:var(--green);
-  text-shadow:0 0 25px rgba(85,255,121,.35);
-  margin-bottom:10px;
+.hero h1{
+    font-size:clamp(42px,7vw,76px);
+    letter-spacing:2px;
+    color:var(--green);
+
+    text-shadow:
+        0 0 25px rgba(85,255,121,.35);
+
+    margin-bottom:12px;
 }
 
 .hero p{
-  font-size:clamp(18px,2.5vw,24px);
-  color:var(--muted);
-  margin-bottom:26px;
+    font-size:clamp(18px,2.5vw,24px);
+    color:var(--muted);
+    margin-bottom:28px;
 }
 
-/* BUTTONS */
+/* =========================
+   BUTTONS
+========================= */
+
 .buttons{
-  display:flex;
-  justify-content:center;
-  gap:13px;
-  flex-wrap:wrap;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:13px;
+    flex-wrap:wrap;
 }
 
 .btn{
-  display:inline-block;
-  text-decoration:none;
-  color:#fff;
-  font-weight:700;
-  padding:14px 23px;
-  border-radius:30px;
-  border:1px solid rgba(255,255,255,.18);
-  transition:.2s;
+    display:inline-block;
+    padding:14px 23px;
+    border-radius:30px;
+
+    color:#fff;
+    text-decoration:none;
+    font-weight:700;
+
+    border:1px solid rgba(255,255,255,.18);
+
+    transition:.25s;
 }
 
 .btn:hover{
-  transform:translateY(-3px);
-  box-shadow:0 0 25px rgba(0,255,190,.3);
+    transform:translateY(-3px);
+    box-shadow:0 0 25px rgba(0,255,190,.3);
 }
 
 .wa{
-  background:#13c766;
+    background:#13c766;
 }
 
 .tg{
-  background:#139bd6;
+    background:#139bd6;
 }
 
 .test{
-  background:linear-gradient(90deg,#31e968,#00b9ee);
+    background:
+        linear-gradient(
+            90deg,
+            #31e968,
+            #00b9ee
+        );
 }
 
-/* CARDS */
+/* =========================
+   SERVICE CARDS
+========================= */
+
 .grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:17px;
-  margin-bottom:48px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:17px;
+    margin-bottom:50px;
 }
 
 .card{
-  background:linear-gradient(145deg,rgba(9,25,88,.9),rgba(3,53,67,.72));
-  border:1px solid rgba(72,255,160,.25);
-  border-radius:22px;
-  padding:28px 18px;
-  text-align:center;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(9,25,88,.9),
+            rgba(3,53,67,.72)
+        );
+
+    border:1px solid rgba(72,255,160,.25);
+    border-radius:22px;
+    padding:28px 18px;
+    text-align:center;
+    transition:.25s;
+}
+
+.card:hover{
+    transform:translateY(-6px);
+    border-color:rgba(85,255,121,.6);
+    box-shadow:0 12px 30px rgba(0,0,0,.25);
 }
 
 .icon{
-  font-size:42px;
-  margin-bottom:13px;
+    font-size:42px;
+    margin-bottom:13px;
 }
 
 .card h2{
-  color:#5cff8a;
-  margin-bottom:9px;
+    color:#5cff8a;
+    margin-bottom:9px;
 }
 
 .card p{
-  color:var(--muted);
-  line-height:1.5;
+    color:var(--muted);
+    line-height:1.5;
 }
 
-/* VIDEO */
+/* =========================
+   VIDEO
+========================= */
+
 .video-section{
-  max-width:900px;
-  margin:0 auto 50px;
+    max-width:900px;
+    margin:0 auto 55px;
+    text-align:center;
 }
 
 .video-title{
-  text-align:center;
-  font-size:32px;
-  margin-bottom:20px;
+    font-size:32px;
+    margin-bottom:20px;
 }
 
 .video-box{
-  background:#000;
-  border:1px solid rgba(75,255,154,.35);
-  border-radius:22px;
-  padding:7px;
-  box-shadow:0 0 35px rgba(0,255,160,.12);
-  overflow:hidden;
+    background:#000;
+    border:1px solid rgba(75,255,154,.45);
+    border-radius:22px;
+    padding:7px;
+    overflow:hidden;
+
+    box-shadow:
+        0 0 35px rgba(0,255,160,.14);
+
+    animation:videoGlow 4s ease-in-out infinite;
 }
 
 .video-box video{
-  width:100%;
-  display:block;
-  border-radius:16px;
+    width:100%;
+    display:block;
+    border-radius:16px;
+    background:#000;
 }
 
-/* TITLES */
+@keyframes videoGlow{
+    0%,100%{
+        box-shadow:
+            0 0 25px rgba(0,255,160,.12);
+    }
+
+    50%{
+        box-shadow:
+            0 0 42px rgba(0,255,160,.28);
+    }
+}
+
+/* =========================
+   TITLES
+========================= */
+
 .title{
-  text-align:center;
-  font-size:32px;
-  margin:30px 0 20px;
+    text-align:center;
+    font-size:32px;
+    margin:30px 0 22px;
 }
 
-/* PACKAGES */
+/* =========================
+   PACKAGES
+========================= */
+
 .packages{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:12px;
-  margin-bottom:50px;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:12px;
+    margin-bottom:55px;
 }
 
 .package{
-  padding:22px 8px;
-  text-align:center;
-  border-radius:17px;
-  background:linear-gradient(145deg,#07185d,#063f58);
-  border:1px solid rgba(75,255,154,.55);
+    padding:22px 8px;
+    text-align:center;
+    border-radius:17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #07185d,
+            #063f58
+        );
+
+    border:1px solid rgba(75,255,154,.55);
+    transition:.25s;
+}
+
+.package:hover{
+    transform:translateY(-5px);
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
 }
 
 .package strong{
-  display:block;
-  font-size:34px;
-  color:var(--green);
+    display:block;
+    font-size:34px;
+    color:var(--green);
+    margin-bottom:5px;
 }
 
 .package span{
-  color:#d9e8ff;
+    color:#d9e8ff;
 }
 
-/* FEATURES */
+/* =========================
+   FEATURES
+========================= */
+
 .features{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:14px;
-  margin-bottom:45px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin-bottom:50px;
 }
 
 .feature{
-  background:rgba(255,255,255,.045);
-  border-left:4px solid var(--green);
-  padding:17px;
-  border-radius:12px;
-  color:#e8f3ff;
+    background:rgba(255,255,255,.045);
+    border-left:4px solid var(--green);
+    padding:17px;
+    border-radius:12px;
+    color:#e8f3ff;
+    transition:.2s;
 }
 
-/* LANGUAGES */
+.feature:hover{
+    background:rgba(255,255,255,.07);
+    transform:translateX(3px);
+}
+
+/* =========================
+   LANGUAGES
+========================= */
+
 .languages{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:48px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:50px;
 }
 
 .flag{
-  padding:10px 15px;
-  border-radius:12px;
-  background:#071653;
-  border:1px solid rgba(255,255,255,.12);
+    padding:10px 15px;
+    border-radius:12px;
+    background:#071653;
+    border:1px solid rgba(255,255,255,.12);
 }
 
-/* CONTACT */
+/* =========================
+   MESSAGE BANNER
+========================= */
+
+.message-banner{
+    max-width:850px;
+    margin:0 auto 50px;
+    padding:38px 24px;
+    border-radius:26px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0,234,255,.10),
+            rgba(85,255,121,.10),
+            rgba(8,20,77,.92)
+        );
+
+    border:1px solid rgba(85,255,121,.35);
+
+    box-shadow:
+        0 0 35px rgba(0,255,190,.10);
+}
+
+.message-content{
+    max-width:650px;
+    margin:auto;
+    text-align:center;
+}
+
+.message-content h2{
+    font-size:32px;
+    color:var(--green);
+    margin-bottom:10px;
+}
+
+.message-content p{
+    color:var(--muted);
+    margin-bottom:22px;
+}
+
+.message-form{
+    display:flex;
+    flex-direction:column;
+    gap:13px;
+}
+
+.message-form input,
+.message-form textarea{
+    width:100%;
+
+    border:1px solid rgba(85,255,121,.25);
+
+    background:rgba(2,6,59,.85);
+
+    color:#fff;
+
+    border-radius:14px;
+
+    padding:14px 16px;
+
+    font-size:16px;
+
+    outline:none;
+
+    transition:.2s;
+}
+
+.message-form input:focus,
+.message-form textarea:focus{
+    border-color:var(--green);
+
+    box-shadow:
+        0 0 15px rgba(85,255,121,.15);
+}
+
+.message-form textarea{
+    min-height:135px;
+    resize:vertical;
+}
+
+.message-buttons{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:4px;
+}
+
+.message-button{
+    border:none;
+    border-radius:30px;
+    padding:14px 22px;
+    font-size:16px;
+    font-weight:bold;
+    color:#fff;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.message-button:hover{
+    transform:translateY(-3px);
+}
+
+.send-whatsapp{
+    background:#13c766;
+}
+
+.send-email{
+    background:#2878ff;
+}
+
+/* =========================
+   CONTACT
+========================= */
+
 .contact{
-  text-align:center;
-  padding:38px 20px;
-  border-radius:26px;
-  background:linear-gradient(
-    135deg,
-    rgba(8,77,75,.55),
-    rgba(8,20,77,.88)
-  );
-  border:1px solid rgba(80,255,150,.3);
-  margin-bottom:40px;
+    text-align:center;
+    padding:40px 20px;
+    border-radius:26px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(8,77,75,.55),
+            rgba(8,20,77,.88)
+        );
+
+    border:1px solid rgba(80,255,150,.3);
+    margin-bottom:45px;
 }
 
 .contact h2{
-  font-size:32px;
-  margin-bottom:9px;
+    font-size:32px;
+    margin-bottom:10px;
 }
 
 .contact p{
-  color:var(--muted);
+    color:var(--muted);
 }
 
 .phone{
-  font-size:27px;
-  font-weight:700;
-  color:var(--green);
-  margin:15px 0 20px;
+    font-size:27px;
+    font-weight:700;
+    color:var(--green);
+    margin:15px 0 20px;
 }
 
-/* FOOTER */
+/* =========================
+   FOOTER
+========================= */
+
 footer{
-  border-top:1px solid rgba(255,255,255,.08);
-  text-align:center;
-  padding:25px;
-  color:#7f91b8;
+    border-top:1px solid rgba(255,255,255,.08);
+    text-align:center;
+    padding:25px;
+    color:#7f91b8;
 }
 
-/* MOBILE */
-@media(max-width:850px){
-  .grid{
-    grid-template-columns:repeat(2,1fr);
-  }
+/* =========================
+   MOBILE
+========================= */
 
-  .features{
-    grid-template-columns:repeat(2,1fr);
-  }
+@media(max-width:850px){
+
+    .grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .features{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .packages{
+        grid-template-columns:repeat(3,1fr);
+    }
 }
 
 @media(max-width:600px){
-  .lang{
-    right:5px;
-  }
 
-  .logo-stage{
-    height:240px;
-  }
+    .lang{
+        right:5px;
+    }
 
-  .logo{
-    width:210px;
-  }
+    .logo-stage{
+        height:245px;
+    }
 
-  .grid,
-  .features{
-    grid-template-columns:1fr;
-  }
+    .logo-wrap{
+        width:225px;
+        height:225px;
+    }
 
-  .packages{
-    grid-template-columns:repeat(2,1fr);
-  }
+    .logo{
+        width:205px;
+    }
 
-  .package:last-child{
-    grid-column:1/-1;
-    width:50%;
-    justify-self:center;
-  }
+    .logo-wrap::before{
+        width:220px;
+        height:220px;
+    }
+
+    .logo-wrap::after{
+        width:215px;
+        height:215px;
+    }
+
+    .grid,
+    .features{
+        grid-template-columns:1fr;
+    }
+
+    .packages{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .package:last-child{
+        grid-column:1/-1;
+        width:50%;
+        justify-self:center;
+    }
+
+    .video-title{
+        font-size:27px;
+    }
+
+    .message-buttons{
+        flex-direction:column;
+    }
+
+    .message-button{
+        width:100%;
+    }
 }
 </style>
 </head>
@@ -355,351 +695,885 @@ footer{
 
 <header class="container">
 
-  <!-- LANGUAGE -->
-  <div class="lang">
-    <button class="active" data-lang="en">🇬🇧</button>
-    <button data-lang="mk">🇲🇰</button>
-    <button data-lang="cs">🇨🇿</button>
-  </div>
+    <div class="lang">
 
-  <!-- LOGO -->
-  <div class="logo-stage">
-    <img
-      class="logo"
-      src="BWIO9738.PNG"
-      alt="BLiZ TV Logo"
-    >
-  </div>
+        <button class="active" data-lang="en">🇬🇧</button>
 
-  <!-- HERO -->
-  <section class="hero">
-    <h1>BLiZ TV</h1>
+        <button data-lang="mk">🇲🇰</button>
 
-    <p id="subtitle">
-      Your new Internet TV experience
-    </p>
-
-    <div class="buttons">
-
-      <a
-        class="btn test"
-        id="testBtn"
-        href="https://wa.me/420776282242"
-        target="_blank"
-      >
-        FREE 24H TEST
-      </a>
-
-      <a
-        class="btn wa"
-        href="https://wa.me/420776282242"
-        target="_blank"
-      >
-        💬 WhatsApp
-      </a>
-
-      <a
-        class="btn tg"
-        href="https://t.me/Blizzuu"
-        target="_blank"
-      >
-        ✈️ Telegram
-      </a>
+        <button data-lang="cs">🇨🇿</button>
 
     </div>
-  </section>
+
+    <div class="logo-stage">
+
+        <div class="logo-wrap">
+
+            <img
+                class="logo"
+                src="./BWIO9738.PNG"
+                alt="BLiZ TV Logo"
+            >
+
+        </div>
+
+    </div>
+
+    <section class="hero">
+
+        <h1>BLiZ TV</h1>
+
+        <p id="subtitle">
+            Your new Internet TV experience
+        </p>
+
+        <div class="buttons">
+
+            <a
+                class="btn test"
+                href="https://wa.me/420776282242"
+                target="_blank"
+            >
+                <span id="testBtn">FREE 24H TEST</span>
+            </a>
+
+            <a
+                class="btn wa"
+                href="https://wa.me/420776282242"
+                target="_blank"
+            >
+                💬 WhatsApp
+            </a>
+
+            <a
+                class="btn tg"
+                href="https://t.me/Blizzuu"
+                target="_blank"
+            >
+                ✈️ Telegram
+            </a>
+
+        </div>
+
+    </section>
 
 </header>
 
 
 <main class="container">
 
-  <!-- SERVICES -->
-  <section class="grid">
+    <!-- SERVICES -->
 
-    <div class="card">
-      <div class="icon">📺</div>
-      <h2 id="liveTitle">Live TV</h2>
-      <p id="liveText">
-        A wide selection of TV channels and categories.
-      </p>
-    </div>
+    <section class="grid">
 
-    <div class="card">
-      <div class="icon">🎬</div>
-      <h2 id="movieTitle">Movies</h2>
-      <p id="movieText">
-        Movies and regularly added new content.
-      </p>
-    </div>
+        <div class="card">
 
-    <div class="card">
-      <div class="icon">📀</div>
-      <h2 id="seriesTitle">Series</h2>
-      <p id="seriesText">
-        Popular series and a wide VOD selection.
-      </p>
-    </div>
+            <div class="icon">📺</div>
 
-    <div class="card">
-      <div class="icon">🛠️</div>
-      <h2 id="supportTitle">24/7 Support</h2>
-      <p id="supportText">
-        Help and support whenever you need it.
-      </p>
-    </div>
+            <h2 id="liveTitle">
+                Live TV
+            </h2>
 
-  </section>
+            <p id="liveText">
+                A wide selection of TV channels and categories.
+            </p>
+
+        </div>
 
 
-  <!-- VIDEO -->
-  <section class="video-section">
+        <div class="card">
 
-    <h2 class="video-title" id="videoTitle">
-      BLiZ TV Video
+            <div class="icon">🎬</div>
+
+            <h2 id="movieTitle">
+                Movies
+            </h2>
+
+            <p id="movieText">
+                Movies and regularly added new content.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">🍿</div>
+
+            <h2 id="seriesTitle">
+                Series
+            </h2>
+
+            <p id="seriesText">
+                Popular series and a wide VOD selection.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">🛠️</div>
+
+            <h2 id="supportTitle">
+                24/7 Support
+            </h2>
+
+            <p id="supportText">
+                Help and support whenever you need it.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- VIDEO -->
+
+    <section class="video-section">
+
+        <h2 class="video-title" id="videoTitle">
+            BLiZ TV Video
+        </h2>
+
+        <div class="video-box">
+
+            <video
+                controls
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="metadata"
+            >
+
+                <source
+                    src="./BlizTv_promo.mp4"
+                    type="video/mp4"
+                >
+
+                Your browser does not support HTML5 video.
+
+            </video>
+
+        </div>
+
+    </section>
+
+
+    <!-- PACKAGES -->
+
+    <h2 class="title" id="packagesTitle">
+        Packages
     </h2>
 
-    <div class="video-box">
+    <section class="packages">
 
-      <video
-        controls
-        playsinline
-        preload="metadata"
-      >
-        <source src="BlizTv_promo.mp4" type="video/mp4">
-        Your browser does not support HTML5 video.
-      </video>
+        <div class="package">
+            <strong>1</strong>
+            <span class="period">month</span>
+        </div>
 
-    </div>
+        <div class="package">
+            <strong>3</strong>
+            <span class="period">months</span>
+        </div>
 
-  </section>
+        <div class="package">
+            <strong>6</strong>
+            <span class="period">months</span>
+        </div>
 
+        <div class="package">
+            <strong>12</strong>
+            <span class="period">months</span>
+        </div>
 
-  <!-- PACKAGES -->
-  <h2 class="title" id="packagesTitle">
-    Packages
-  </h2>
+        <div class="package">
+            <strong>24</strong>
+            <span class="period">months</span>
+        </div>
 
-  <section class="packages">
-
-    <div class="package">
-      <strong>1</strong>
-      <span class="period">month</span>
-    </div>
-
-    <div class="package">
-      <strong>3</strong>
-      <span class="period">months</span>
-    </div>
-
-    <div class="package">
-      <strong>6</strong>
-      <span class="period">months</span>
-    </div>
-
-    <div class="package">
-      <strong>12</strong>
-      <span class="period">months</span>
-    </div>
-
-    <div class="package">
-      <strong>24</strong>
-      <span class="period">months</span>
-    </div>
-
-  </section>
+    </section>
 
 
-  <!-- FEATURES -->
-  <h2 class="title" id="offerTitle">
-    What BLiZ TV offers
-  </h2>
+    <!-- FEATURES -->
 
-  <section class="features">
-
-    <div class="feature" id="f1">
-      ✅ Large selection of Live TV channels
-    </div>
-
-    <div class="feature" id="f2">
-      ✅ 10,000+ movies and VOD content
-    </div>
-
-    <div class="feature" id="f3">
-      ✅ Regularly added new movies
-    </div>
-
-    <div class="feature" id="f4">
-      ✅ Free 24-hour test
-    </div>
-
-    <div class="feature" id="f5">
-      ✅ 24/7 customer support
-    </div>
-
-    <div class="feature" id="f6">
-      ✅ Packages from 1 to 24 months
-    </div>
-
-  </section>
-
-
-  <!-- LANGUAGES -->
-  <h2 class="title" id="categoriesTitle">
-    Available languages
-  </h2>
-
-  <div class="languages">
-    <div class="flag">🇬🇧 English</div>
-    <div class="flag">🇲🇰 Македонски</div>
-    <div class="flag">🇨🇿 Čeština</div>
-  </div>
-
-
-  <!-- CONTACT -->
-  <section class="contact">
-
-    <h2 id="contactTitle">
-      Contact us
+    <h2 class="title" id="offerTitle">
+        What BLiZ TV offers
     </h2>
 
-    <p id="contactText">
-      For a free 24-hour test or more information
-    </p>
+    <section class="features">
 
-    <div class="phone">
-      +420 776 282 242
+        <div class="feature" id="f1">
+            ✅ Large selection of Live TV channels
+        </div>
+
+        <div class="feature" id="f2">
+            ✅ 10,000+ movies and VOD content
+        </div>
+
+        <div class="feature" id="f3">
+            ✅ Regularly added new movies
+        </div>
+
+        <div class="feature" id="f4">
+            ✅ Free 24-hour test
+        </div>
+
+        <div class="feature" id="f5">
+            ✅ 24/7 customer support
+        </div>
+
+        <div class="feature" id="f6">
+            ✅ Packages from 1 to 24 months
+        </div>
+
+    </section>
+
+
+    <!-- LANGUAGES -->
+
+    <h2 class="title" id="categoriesTitle">
+        Available languages
+    </h2>
+
+    <div class="languages">
+
+        <div class="flag">
+            🇬🇧 English
+        </div>
+
+        <div class="flag">
+            🇲🇰 Македонски
+        </div>
+
+        <div class="flag">
+            🇨🇿 Čeština
+        </div>
+
     </div>
 
-    <div class="buttons">
 
-      <a
-        class="btn wa"
-        href="https://wa.me/420776282242"
-        target="_blank"
-      >
-        💬 WhatsApp
-      </a>
+    <!-- MESSAGE BANNER -->
 
-      <a
-        class="btn tg"
-        href="https://t.me/Blizzuu"
-        target="_blank"
-      >
-        ✈️ Telegram
-      </a>
+    <section class="message-banner">
 
-    </div>
+        <div class="message-content">
 
-  </section>
+            <h2 id="messageTitle">
+                💬 Send us a message
+            </h2>
+
+            <p id="messageSubtitle">
+                Have a question? Contact BLiZ TV directly.
+            </p>
+
+
+            <form
+                class="message-form"
+                id="messageForm"
+            >
+
+                <input
+                    type="text"
+                    id="userName"
+                    placeholder="Your name"
+                    required
+                >
+
+                <input
+                    type="email"
+                    id="userEmail"
+                    placeholder="Your email"
+                    required
+                >
+
+                <textarea
+                    id="userMessage"
+                    placeholder="Write your message..."
+                    required
+                ></textarea>
+
+
+                <div class="message-buttons">
+
+                    <button
+                        type="button"
+                        class="message-button send-whatsapp"
+                        onclick="sendWhatsApp()"
+                    >
+                        📲 Send to WhatsApp
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="message-button send-email"
+                        onclick="sendEmail()"
+                    >
+                        ✉️ Send by Email
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+    <!-- CONTACT -->
+
+    <section class="contact">
+
+        <h2 id="contactTitle">
+            Contact us
+        </h2>
+
+        <p id="contactText">
+            For a free 24-hour test or more information
+        </p>
+
+        <div class="phone">
+            +420 776 282 242
+        </div>
+
+        <div class="buttons">
+
+            <a
+                class="btn wa"
+                href="https://wa.me/420776282242"
+                target="_blank"
+            >
+                💬 WhatsApp
+            </a>
+
+            <a
+                class="btn tg"
+                href="https://t.me/Blizzuu"
+                target="_blank"
+            >
+                ✈️ Telegram
+            </a>
+
+        </div>
+
+    </section>
 
 </main>
 
 
 <footer>
-  © 2026 BLiZ TV · Internet Television
+    © 2026 BLiZ TV · Internet Television
 </footer>
 
 
 <script>
 
+/* =====================================================
+   TRANSLATIONS
+===================================================== */
+
 const T = {
 
-  en:{
-    videoTitle:"BLiZ TV Video",
-    subtitle:"Your new Internet TV experience",
+    en:{
 
-    liveTitle:"Live TV",
-    liveText:"A wide selection of TV channels and categories.",
+        videoTitle:"BLiZ TV Video",
 
-    movieTitle:"Movies",
-    movieText:"Movies and regularly added new content.",
+        subtitle:
+            "Your new Internet TV experience",
 
-    seriesTitle:"Series",
-    seriesText:"Popular series and a wide VOD selection.",
+        liveTitle:"Live TV",
 
-    supportTitle:"24/7 Support",
-    supportText:"Help and support whenever you need it.",
+        liveText:
+            "A wide selection of TV channels and categories.",
 
-    packagesTitle:"Packages",
-    offerTitle:"What BLiZ TV offers",
-    categoriesTitle:"Available languages",
+        movieTitle:"Movies",
 
-    contactTitle:"Contact us",
-    contactText:"For a free 24-hour test or more information",
+        movieText:
+            "Movies and regularly added new content.",
 
-    period:["month","months"],
+        seriesTitle:"Series",
 
-    features:[
-      "Large selection of Live TV channels",
-      "10,000+ movies and VOD content",
-      "Regularly added new movies",
-      "Free 24-hour test",
-      "24/7 customer support",
-      "Packages from 1 to 24 months"
-    ],
+        seriesText:
+            "Popular series and a wide VOD selection.",
 
-    test:"FREE 24H TEST"
-  },
+        supportTitle:"24/7 Support",
+
+        supportText:
+            "Help and support whenever you need it.",
+
+        packagesTitle:"Packages",
+
+        offerTitle:
+            "What BLiZ TV offers",
+
+        categoriesTitle:
+            "Available languages",
+
+        contactTitle:
+            "Contact us",
+
+        contactText:
+            "For a free 24-hour test or more information",
+
+        messageTitle:
+            "💬 Send us a message",
+
+        messageSubtitle:
+            "Have a question? Contact BLiZ TV directly.",
+
+        namePlaceholder:
+            "Your name",
+
+        emailPlaceholder:
+            "Your email",
+
+        messagePlaceholder:
+            "Write your message...",
+
+        test:
+            "FREE 24H TEST",
+
+        features:[
+            "Large selection of Live TV channels",
+            "10,000+ movies and VOD content",
+            "Regularly added new movies",
+            "Free 24-hour test",
+            "24/7 customer support",
+            "Packages from 1 to 24 months"
+        ],
+
+        period:[
+            "month",
+            "months"
+        ]
+    },
 
 
-  mk:{
-    videoTitle:"BLiZ TV Видео",
-    subtitle:"Вашето ново искуство со интернет телевизија",
+    mk:{
 
-    liveTitle:"Live TV",
-    liveText:"Голем избор на ТВ канали и различни категории.",
+        videoTitle:
+            "BLiZ TV Видео",
 
-    movieTitle:"Филмови",
-    movieText:"Филмови и редовно додавани нови содржини.",
+        subtitle:
+            "Вашето ново искуство со интернет телевизија",
 
-    seriesTitle:"Серии",
-    seriesText:"Популарни серии и разновидна VOD понуда.",
+        liveTitle:
+            "Live TV",
 
-    supportTitle:"24/7 Поддршка",
-    supportText:"Помош и поддршка кога и да ви е потребна.",
+        liveText:
+            "Голем избор на ТВ канали и различни категории.",
 
-    packagesTitle:"Пакети",
-    offerTitle:"Што нуди BLiZ TV?",
-    categoriesTitle:"Достапни јазици",
+        movieTitle:
+            "Филмови",
 
-    contactTitle:"Контактирај нè",
-    contactText:"За бесплатен 24-часовен тест или повеќе информации",
+        movieText:
+            "Филмови и редовно додавани нови содржини.",
 
-    period:["месец","месеци"],
+        seriesTitle:
+            "Серии",
 
-    features:[
-      "Голем избор на Live TV канали",
-      "10.000+ филмови и VOD содржини",
-      "Редовно додавање нови филмови",
-      "24 часа бесплатен тест",
-      "24/7 корисничка поддршка",
-      "Пакети од 1 до 24 месеци"
-    ],
+        seriesText:
+            "Популарни серии и разновидна VOD понуда.",
 
-    test:"БЕСПЛАТЕН 24H ТЕСТ"
-  },
+        supportTitle:
+            "24/7 Поддршка",
+
+        supportText:
+            "Помош и поддршка кога и да ви е потребна.",
+
+        packagesTitle:
+            "Пакети",
+
+        offerTitle:
+            "Што нуди BLiZ TV?",
+
+        categoriesTitle:
+            "Достапни јазици",
+
+        contactTitle:
+            "Контактирај нè",
+
+        contactText:
+            "За бесплатен 24-часовен тест или повеќе информации",
+
+        messageTitle:
+            "💬 Испратете ни порака",
+
+        messageSubtitle:
+            "Имате прашање? Контактирајте го BLiZ TV директно.",
+
+        namePlaceholder:
+            "Вашето име",
+
+        emailPlaceholder:
+            "Вашиот email",
+
+        messagePlaceholder:
+            "Напишете ја вашата порака...",
+
+        test:
+            "БЕСПЛАТЕН 24H ТЕСТ",
+
+        features:[
+            "Голем избор на Live TV канали",
+            "10.000+ филмови и VOD содржини",
+            "Редовно додавање нови филмови",
+            "24 часа бесплатен тест",
+            "24/7 корисничка поддршка",
+            "Пакети од 1 до 24 месеци"
+        ],
+
+        period:[
+            "месец",
+            "месеци"
+        ]
+    },
 
 
-  cs:{
-    videoTitle:"BLiZ TV Video",
-    subtitle:"Vaše nová internetová televize",
+    cs:{
 
-    liveTitle:"Živá TV",
-    liveText:"Velký výběr televizních kanálů a kategorií.",
+        videoTitle:
+            "BLiZ TV Video",
 
-    movieTitle:"Filmy",
-    movieText:"Filmy a pravidelně přidávaný nový obsah.",
+        subtitle:
+            "Vaše nová internetová televize",
 
-    seriesTitle:"Seriály",
-    seriesText:"Oblíbené seriály a široká nabídka VOD.",
+        liveTitle:
+            "Živá TV",
 
-    supportTitle:"Podpora 24/7",
-    supportText:"Pomoc a podpora, kdykoli ji potřebujete.",
+        liveText:
+            "Velký výběr televizních kanálů a kategorií.",
 
-    packagesTitle:"Balíčky",
-    offerTitle:"Co BLiZ TV nabízí",
-    categoriesTitle:"Dostupné jazyky",
+        movieTitle:
+            "Filmy",
 
-    contactTitle:"Kontaktujte nás",
-    contactText:"Pro
+        movieText:
+            "Filmy a pravidelně přidávaný nový obsah.",
+
+        seriesTitle:
+            "Seriály",
+
+        seriesText:
+            "Oblíbené seriály a široká nabídka VOD.",
+
+        supportTitle:
+            "Podpora 24/7",
+
+        supportText:
+            "Pomoc a podpora, kdykoli ji potřebujete.",
+
+        packagesTitle:
+            "Balíčky",
+
+        offerTitle:
+            "Co BLiZ TV nabízí",
+
+        categoriesTitle:
+            "Dostupné jazyky",
+
+        contactTitle:
+            "Kontaktujte nás",
+
+        contactText:
+            "Pro bezplatný 24hodinový test nebo více informací",
+
+        messageTitle:
+            "💬 Napište nám",
+
+        messageSubtitle:
+            "Máte dotaz? Kontaktujte BLiZ TV přímo.",
+
+        namePlaceholder:
+            "Vaše jméno",
+
+        emailPlaceholder:
+            "Váš email",
+
+        messagePlaceholder:
+            "Napište svou zprávu...",
+
+        test:
+            "BEZPLATNÝ 24H TEST",
+
+        features:[
+            "Velký výběr Live TV kanálů",
+            "10 000+ filmů a VOD obsahu",
+            "Pravidelně přidávané nové filmy",
+            "Bezplatný 24hodinový test",
+            "Zákaznická podpora 24/7",
+            "Balíčky na 1 až 24 měsíců"
+        ],
+
+        period:[
+            "měsíc",
+            "měsíce"
+        ]
+    }
+
+};
+
+
+/* =====================================================
+   LANGUAGE SWITCH
+===================================================== */
+
+function setLang(lang){
+
+    const t = T[lang];
+
+    document.documentElement.lang = lang;
+
+    document.getElementById("videoTitle").textContent =
+        t.videoTitle;
+
+    document.getElementById("subtitle").textContent =
+        t.subtitle;
+
+    document.getElementById("liveTitle").textContent =
+        t.liveTitle;
+
+    document.getElementById("liveText").textContent =
+        t.liveText;
+
+    document.getElementById("movieTitle").textContent =
+        t.movieTitle;
+
+    document.getElementById("movieText").textContent =
+        t.movieText;
+
+    document.getElementById("seriesTitle").textContent =
+        t.seriesTitle;
+
+    document.getElementById("seriesText").textContent =
+        t.seriesText;
+
+    document.getElementById("supportTitle").textContent =
+        t.supportTitle;
+
+    document.getElementById("supportText").textContent =
+        t.supportText;
+
+    document.getElementById("packagesTitle").textContent =
+        t.packagesTitle;
+
+    document.getElementById("offerTitle").textContent =
+        t.offerTitle;
+
+    document.getElementById("categoriesTitle").textContent =
+        t.categoriesTitle;
+
+    document.getElementById("contactTitle").textContent =
+        t.contactTitle;
+
+    document.getElementById("contactText").textContent =
+        t.contactText;
+
+    document.getElementById("messageTitle").textContent =
+        t.messageTitle;
+
+    document.getElementById("messageSubtitle").textContent =
+        t.messageSubtitle;
+
+    document.getElementById("userName").placeholder =
+        t.namePlaceholder;
+
+    document.getElementById("userEmail").placeholder =
+        t.emailPlaceholder;
+
+    document.getElementById("userMessage").placeholder =
+        t.messagePlaceholder;
+
+    document.getElementById("testBtn").textContent =
+        t.test;
+
+
+    document.querySelectorAll(".period").forEach(
+        (element,index)=>{
+
+            element.textContent =
+                index === 0
+                    ? t.period[0]
+                    : t.period[1];
+
+        }
+    );
+
+
+    const featureIds = [
+        "f1",
+        "f2",
+        "f3",
+        "f4",
+        "f5",
+        "f6"
+    ];
+
+
+    featureIds.forEach(
+        (id,index)=>{
+
+            document.getElementById(id).textContent =
+                "✅ " + t.features[index];
+
+        }
+    );
+
+
+    document.querySelectorAll(".lang button").forEach(
+        button=>{
+
+            button.classList.toggle(
+                "active",
+                button.dataset.lang === lang
+            );
+
+        }
+    );
+}
+
+
+document.querySelectorAll(".lang button").forEach(
+    button=>{
+
+        button.addEventListener(
+            "click",
+            ()=>{
+                setLang(button.dataset.lang);
+            }
+        );
+
+    }
+);
+
+
+/* English default */
+
+setLang("en");
+
+
+/* =====================================================
+   MESSAGE -> WHATSAPP
+===================================================== */
+
+function getMessageData(){
+
+    const name =
+        document.getElementById("userName")
+        .value.trim();
+
+    const email =
+        document.getElementById("userEmail")
+        .value.trim();
+
+    const message =
+        document.getElementById("userMessage")
+        .value.trim();
+
+
+    if(!name || !email || !message){
+
+        alert(
+            "Please fill in your name, email and message."
+        );
+
+        return null;
+    }
+
+
+    return {
+        name:name,
+        email:email,
+        message:message
+    };
+}
+
+
+function sendWhatsApp(){
+
+    const data =
+        getMessageData();
+
+    if(!data){
+        return;
+    }
+
+
+    const text =
+`BLiZ TV MESSAGE
+
+Name: ${data.name}
+
+Email: ${data.email}
+
+Message:
+${data.message}`;
+
+
+    const url =
+        "https://wa.me/420776282242?text=" +
+        encodeURIComponent(text);
+
+
+    window.open(
+        url,
+        "_blank"
+    );
+}
+
+
+/* =====================================================
+   MESSAGE -> EMAIL
+===================================================== */
+
+function sendEmail(){
+
+    const data =
+        getMessageData();
+
+    if(!data){
+        return;
+    }
+
+
+    const subject =
+        "BLiZ TV Website Message";
+
+
+    const body =
+`Name: ${data.name}
+
+Email: ${data.email}
+
+Message:
+${data.message}`;
+
+
+    /*
+       CHANGE THIS EMAIL TO YOUR REAL EMAIL
+    */
+
+    const yourEmail =
+        "YOUR-EMAIL@example.com";
+
+
+    const mailto =
+        "mailto:" +
+        yourEmail +
+        "?subject=" +
+        encodeURIComponent(subject) +
+        "&body=" +
+        encodeURIComponent(body);
+
+
+    window.location.href =
+        mailto;
+}
+
+</script>
+
+</body>
+</html>
