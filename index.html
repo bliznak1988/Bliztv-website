@@ -4,1576 +4,188 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BLiZ TV</title>
-
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
-:root{
-    --bg:#02063b;
-    --green:#55ff79;
-    --cyan:#00eaff;
-    --text:#f4fbff;
-    --muted:#b8c9e8;
-}
-
-html{
-    scroll-behavior:smooth;
-}
-
-body{
-    font-family:Arial,Helvetica,sans-serif;
-    color:var(--text);
-    min-height:100vh;
-    overflow-x:hidden;
-
-    background:
-        radial-gradient(circle at 50% 5%,rgba(0,238,255,.14),transparent 28%),
-        radial-gradient(circle at 50% 45%,rgba(48,255,111,.08),transparent 40%),
-        var(--bg);
-}
-
-.container{
-    width:min(1120px,92%);
-    margin:auto;
-}
-
-/* =========================
-   LANGUAGE
-========================= */
-
-header{
-    position:relative;
-    text-align:center;
-    padding-top:20px;
-}
-
-.lang{
-    position:absolute;
-    top:18px;
-    right:0;
-    display:flex;
-    gap:7px;
-    z-index:50;
-}
-
-.lang button{
-    width:44px;
-    height:36px;
-    border:1px solid rgba(95,255,160,.35);
-    border-radius:12px;
-    background:rgba(4,14,65,.9);
-    color:#fff;
-    cursor:pointer;
-    font-size:20px;
-    transition:.25s;
-}
-
-.lang button:hover,
-.lang button.active{
-    border-color:var(--green);
-    box-shadow:0 0 18px rgba(85,255,121,.4);
-    transform:translateY(-2px);
-}
-
-/* =========================
-   LOGO
-========================= */
-
-.logo-stage{
-    height:310px;
-    display:grid;
-    place-items:center;
-    position:relative;
-}
-
-.logo-wrap{
-    position:relative;
-    width:290px;
-    height:290px;
-    display:grid;
-    place-items:center;
-}
-
-.logo-wrap::before{
-    content:"";
-    position:absolute;
-    width:270px;
-    height:270px;
-    border-radius:50%;
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(0,238,255,.25),
-            rgba(85,255,121,.12) 40%,
-            transparent 70%
-        );
-
-    filter:blur(12px);
-    animation:aura 3s ease-in-out infinite;
-}
-
-.logo-wrap::after{
-    content:"";
-    position:absolute;
-    width:270px;
-    height:270px;
-    border-radius:50%;
-
-    border:2px solid rgba(0,234,255,.45);
-    border-right-color:transparent;
-    border-bottom-color:rgba(85,255,121,.65);
-
-    box-shadow:
-        0 0 20px rgba(0,234,255,.2),
-        inset 0 0 20px rgba(85,255,121,.1);
-
-    animation:rotateRing 7s linear infinite;
-}
-
-.logo{
-    width:245px;
-    max-width:78vw;
-    position:relative;
-    z-index:5;
-    border-radius:20px;
-
-    animation:
-        logoFloat 3s ease-in-out infinite,
-        logoGlow 3s ease-in-out infinite;
-}
-
-@keyframes logoFloat{
-    0%,100%{
-        transform:translateY(0) scale(1);
-    }
-
-    50%{
-        transform:translateY(-10px) scale(1.025);
-    }
-}
-
-@keyframes logoGlow{
-    0%,100%{
-        filter:drop-shadow(0 0 15px rgba(0,255,200,.35));
-    }
-
-    50%{
-        filter:drop-shadow(0 0 32px rgba(0,255,200,.8));
-    }
-}
-
-@keyframes aura{
-    0%,100%{
-        transform:scale(.82);
-        opacity:.45;
-    }
-
-    50%{
-        transform:scale(1.12);
-        opacity:.95;
-    }
-}
-
-@keyframes rotateRing{
-    from{
-        transform:rotate(0deg);
-    }
-
-    to{
-        transform:rotate(360deg);
-    }
-}
-
-/* =========================
-   HERO
-========================= */
-
-.hero{
-    text-align:center;
-    padding:15px 0 55px;
-}
-
-.hero h1{
-    font-size:clamp(42px,7vw,76px);
-    letter-spacing:2px;
-    color:var(--green);
-
-    text-shadow:
-        0 0 25px rgba(85,255,121,.35);
-
-    margin-bottom:12px;
-}
-
-.hero p{
-    font-size:clamp(18px,2.5vw,24px);
-    color:var(--muted);
-    margin-bottom:28px;
-}
-
-/* =========================
-   BUTTONS
-========================= */
-
-.buttons{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:13px;
-    flex-wrap:wrap;
-}
-
-.btn{
-    display:inline-block;
-    padding:14px 23px;
-    border-radius:30px;
-
-    color:#fff;
-    text-decoration:none;
-    font-weight:700;
-
-    border:1px solid rgba(255,255,255,.18);
-
-    transition:.25s;
-}
-
-.btn:hover{
-    transform:translateY(-3px);
-    box-shadow:0 0 25px rgba(0,255,190,.3);
-}
-
-.wa{
-    background:#13c766;
-}
-
-.tg{
-    background:#139bd6;
-}
-
-.test{
-    background:
-        linear-gradient(
-            90deg,
-            #31e968,
-            #00b9ee
-        );
-}
-
-/* =========================
-   SERVICE CARDS
-========================= */
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:17px;
-    margin-bottom:50px;
-}
-
-.card{
-    background:
-        linear-gradient(
-            145deg,
-            rgba(9,25,88,.9),
-            rgba(3,53,67,.72)
-        );
-
-    border:1px solid rgba(72,255,160,.25);
-    border-radius:22px;
-    padding:28px 18px;
-    text-align:center;
-    transition:.25s;
-}
-
-.card:hover{
-    transform:translateY(-6px);
-    border-color:rgba(85,255,121,.6);
-    box-shadow:0 12px 30px rgba(0,0,0,.25);
-}
-
-.icon{
-    font-size:42px;
-    margin-bottom:13px;
-}
-
-.card h2{
-    color:#5cff8a;
-    margin-bottom:9px;
-}
-
-.card p{
-    color:var(--muted);
-    line-height:1.5;
-}
-
-/* =========================
-   VIDEO
-========================= */
-
-.video-section{
-    max-width:900px;
-    margin:0 auto 55px;
-    text-align:center;
-}
-
-.video-title{
-    font-size:32px;
-    margin-bottom:20px;
-}
-
-.video-box{
-    background:#000;
-    border:1px solid rgba(75,255,154,.45);
-    border-radius:22px;
-    padding:7px;
-    overflow:hidden;
-
-    box-shadow:
-        0 0 35px rgba(0,255,160,.14);
-
-    animation:videoGlow 4s ease-in-out infinite;
-}
-
-.video-box video{
-    width:100%;
-    display:block;
-    border-radius:16px;
-    background:#000;
-}
-
-@keyframes videoGlow{
-    0%,100%{
-        box-shadow:
-            0 0 25px rgba(0,255,160,.12);
-    }
-
-    50%{
-        box-shadow:
-            0 0 42px rgba(0,255,160,.28);
-    }
-}
-
-/* =========================
-   TITLES
-========================= */
-
-.title{
-    text-align:center;
-    font-size:32px;
-    margin:30px 0 22px;
-}
-
-/* =========================
-   PACKAGES
-========================= */
-
-.packages{
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:12px;
-    margin-bottom:55px;
-}
-
-.package{
-    padding:22px 8px;
-    text-align:center;
-    border-radius:17px;
-
-    background:
-        linear-gradient(
-            145deg,
-            #07185d,
-            #063f58
-        );
-
-    border:1px solid rgba(75,255,154,.55);
-    transition:.25s;
-}
-
-.package:hover{
-    transform:translateY(-5px);
-    box-shadow:0 10px 30px rgba(0,0,0,.25);
-}
-
-.package strong{
-    display:block;
-    font-size:34px;
-    color:var(--green);
-    margin-bottom:5px;
-}
-
-.package span{
-    color:#d9e8ff;
-}
-
-/* =========================
-   FEATURES
-========================= */
-
-.features{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:14px;
-    margin-bottom:50px;
-}
-
-.feature{
-    background:rgba(255,255,255,.045);
-    border-left:4px solid var(--green);
-    padding:17px;
-    border-radius:12px;
-    color:#e8f3ff;
-    transition:.2s;
-}
-
-.feature:hover{
-    background:rgba(255,255,255,.07);
-    transform:translateX(3px);
-}
-
-/* =========================
-   LANGUAGES
-========================= */
-
-.languages{
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    flex-wrap:wrap;
-    margin-bottom:50px;
-}
-
-.flag{
-    padding:10px 15px;
-    border-radius:12px;
-    background:#071653;
-    border:1px solid rgba(255,255,255,.12);
-}
-
-/* =========================
-   MESSAGE BANNER
-========================= */
-
-.message-banner{
-    max-width:850px;
-    margin:0 auto 50px;
-    padding:38px 24px;
-    border-radius:26px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(0,234,255,.10),
-            rgba(85,255,121,.10),
-            rgba(8,20,77,.92)
-        );
-
-    border:1px solid rgba(85,255,121,.35);
-
-    box-shadow:
-        0 0 35px rgba(0,255,190,.10);
-}
-
-.message-content{
-    max-width:650px;
-    margin:auto;
-    text-align:center;
-}
-
-.message-content h2{
-    font-size:32px;
-    color:var(--green);
-    margin-bottom:10px;
-}
-
-.message-content p{
-    color:var(--muted);
-    margin-bottom:22px;
-}
-
-.message-form{
-    display:flex;
-    flex-direction:column;
-    gap:13px;
-}
-
-.message-form input,
-.message-form textarea{
-    width:100%;
-
-    border:1px solid rgba(85,255,121,.25);
-
-    background:rgba(2,6,59,.85);
-
-    color:#fff;
-
-    border-radius:14px;
-
-    padding:14px 16px;
-
-    font-size:16px;
-
-    outline:none;
-
-    transition:.2s;
-}
-
-.message-form input:focus,
-.message-form textarea:focus{
-    border-color:var(--green);
-
-    box-shadow:
-        0 0 15px rgba(85,255,121,.15);
-}
-
-.message-form textarea{
-    min-height:135px;
-    resize:vertical;
-}
-
-.message-buttons{
-    display:flex;
-    justify-content:center;
-    gap:12px;
-    flex-wrap:wrap;
-    margin-top:4px;
-}
-
-.message-button{
-    border:none;
-    border-radius:30px;
-    padding:14px 22px;
-    font-size:16px;
-    font-weight:bold;
-    color:#fff;
-    cursor:pointer;
-    transition:.25s;
-}
-
-.message-button:hover{
-    transform:translateY(-3px);
-}
-
-.send-whatsapp{
-    background:#13c766;
-}
-
-.send-email{
-    background:#2878ff;
-}
-
-/* =========================
-   CONTACT
-========================= */
-
-.contact{
-    text-align:center;
-    padding:40px 20px;
-    border-radius:26px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(8,77,75,.55),
-            rgba(8,20,77,.88)
-        );
-
-    border:1px solid rgba(80,255,150,.3);
-    margin-bottom:45px;
-}
-
-.contact h2{
-    font-size:32px;
-    margin-bottom:10px;
-}
-
-.contact p{
-    color:var(--muted);
-}
-
-.phone{
-    font-size:27px;
-    font-weight:700;
-    color:var(--green);
-    margin:15px 0 20px;
-}
-
-/* =========================
-   FOOTER
-========================= */
-
-footer{
-    border-top:1px solid rgba(255,255,255,.08);
-    text-align:center;
-    padding:25px;
-    color:#7f91b8;
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:850px){
-
-    .grid{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .features{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .packages{
-        grid-template-columns:repeat(3,1fr);
-    }
-}
-
-@media(max-width:600px){
-
-    .lang{
-        right:5px;
-    }
-
-    .logo-stage{
-        height:245px;
-    }
-
-    .logo-wrap{
-        width:225px;
-        height:225px;
-    }
-
-    .logo{
-        width:205px;
-    }
-
-    .logo-wrap::before{
-        width:220px;
-        height:220px;
-    }
-
-    .logo-wrap::after{
-        width:215px;
-        height:215px;
-    }
-
-    .grid,
-    .features{
-        grid-template-columns:1fr;
-    }
-
-    .packages{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .package:last-child{
-        grid-column:1/-1;
-        width:50%;
-        justify-self:center;
-    }
-
-    .video-title{
-        font-size:27px;
-    }
-
-    .message-buttons{
-        flex-direction:column;
-    }
-
-    .message-button{
-        width:100%;
-    }
-}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#02063b;--green:#55ff79;--cyan:#00eaff;--text:#f4fbff;--muted:#b8c9e8}
+html{scroll-behavior:smooth}
+body{font-family:Arial,Helvetica,sans-serif;color:var(--text);min-height:100vh;overflow-x:hidden;background:radial-gradient(circle at 50% 5%,rgba(0,238,255,.14),transparent 28%),radial-gradient(circle at 50% 45%,rgba(48,255,111,.08),transparent 40%),var(--bg)}
+.container{width:min(1120px,92%);margin:auto}
+header{position:relative;text-align:center;padding-top:20px}
+.lang{position:absolute;top:18px;right:0;display:flex;gap:7px;z-index:50}
+.lang button{width:44px;height:36px;border:1px solid rgba(95,255,160,.35);border-radius:12px;background:rgba(4,14,65,.9);color:#fff;cursor:pointer;font-size:20px;transition:.25s}
+.lang button:hover,.lang button.active{border-color:var(--green);box-shadow:0 0 18px rgba(85,255,121,.4);transform:translateY(-2px)}
+.logo-stage{height:310px;display:grid;place-items:center;position:relative}
+.logo-wrap{position:relative;width:290px;height:290px;display:grid;place-items:center}
+.logo-wrap::before{content:"";position:absolute;width:270px;height:270px;border-radius:50%;background:radial-gradient(circle,rgba(0,238,255,.25),rgba(85,255,121,.12) 40%,transparent 70%);filter:blur(12px);animation:aura 3s ease-in-out infinite}
+.logo-wrap::after{content:"";position:absolute;width:270px;height:270px;border-radius:50%;border:2px solid rgba(0,234,255,.45);border-right-color:transparent;border-bottom-color:rgba(85,255,121,.65);box-shadow:0 0 20px rgba(0,234,255,.2),inset 0 0 20px rgba(85,255,121,.1);animation:rotateRing 7s linear infinite}
+.logo{width:245px;max-width:78vw;position:relative;z-index:5;border-radius:20px;animation:logoFloat 3s ease-in-out infinite,logoGlow 3s ease-in-out infinite}
+@keyframes logoFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.025)}}
+@keyframes logoGlow{0%,100%{filter:drop-shadow(0 0 15px rgba(0,255,200,.35))}50%{filter:drop-shadow(0 0 32px rgba(0,255,200,.8))}}
+@keyframes aura{0%,100%{transform:scale(.82);opacity:.45}50%{transform:scale(1.12);opacity:.95}}
+@keyframes rotateRing{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.hero{text-align:center;padding:15px 0 55px}
+.hero h1{font-size:clamp(42px,7vw,76px);letter-spacing:2px;color:var(--green);text-shadow:0 0 25px rgba(85,255,121,.35);margin-bottom:12px}
+.hero p{font-size:clamp(18px,2.5vw,24px);color:var(--muted);margin-bottom:28px}
+.buttons{display:flex;justify-content:center;align-items:center;gap:13px;flex-wrap:wrap}
+.btn{display:inline-block;padding:14px 23px;border-radius:30px;color:#fff;text-decoration:none;font-weight:700;border:1px solid rgba(255,255,255,.18);transition:.25s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 0 25px rgba(0,255,190,.3)}
+.wa{background:#13c766} .tg{background:#139bd6} .test{background:linear-gradient(90deg,#31e968,#00b9ee)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:17px;margin-bottom:50px}
+.card{background:linear-gradient(145deg,rgba(9,25,88,.9),rgba(3,53,67,.72));border:1px solid rgba(72,255,160,.25);border-radius:22px;padding:28px 18px;text-align:center;transition:.25s}
+.card:hover{transform:translateY(-6px);border-color:rgba(85,255,121,.6);box-shadow:0 12px 30px rgba(0,0,0,.25)}
+.icon{font-size:42px;margin-bottom:13px} .card h2{color:#5cff8a;margin-bottom:9px} .card p{color:var(--muted);line-height:1.5}
+.video-section{max-width:900px;margin:0 auto 55px;text-align:center} .video-title{font-size:32px;margin-bottom:20px}
+.video-box{background:#000;border:1px solid rgba(75,255,154,.45);border-radius:22px;padding:7px;overflow:hidden;box-shadow:0 0 35px rgba(0,255,160,.14);animation:videoGlow 4s ease-in-out infinite}
+.video-box video{width:100%;display:block;border-radius:16px;background:#000}
+@keyframes videoGlow{0%,100%{box-shadow:0 0 25px rgba(0,255,160,.12)}50%{box-shadow:0 0 42px rgba(0,255,160,.28)}}
+.title{text-align:center;font-size:32px;margin:30px 0 22px}
+.packages{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:55px}
+.package{padding:22px 8px;text-align:center;border-radius:17px;background:linear-gradient(145deg,#07185d,#063f58);border:1px solid rgba(75,255,154,.55);transition:.25s}
+.package:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.package strong{display:block;font-size:34px;color:var(--green);margin-bottom:5px} .package span{color:#d9e8ff}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:50px}
+.feature{background:rgba(255,255,255,.045);border-left:4px solid var(--green);padding:17px;border-radius:12px;color:#e8f3ff;transition:.2s}
+.feature:hover{background:rgba(255,255,255,.07);transform:translateX(3px)}
+.languages{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:50px}
+.flag{padding:10px 15px;border-radius:12px;background:#071653;border:1px solid rgba(255,255,255,.12)}
+.message-banner{max-width:850px;margin:0 auto 50px;padding:38px 24px;border-radius:26px;background:linear-gradient(135deg,rgba(0,234,255,.10),rgba(85,255,121,.10),rgba(8,20,77,.92));border:1px solid rgba(85,255,121,.35);box-shadow:0 0 35px rgba(0,255,190,.10)}
+.message-content{max-width:650px;margin:auto;text-align:center} .message-content h2{font-size:32px;color:var(--green);margin-bottom:10px} .message-content p{color:var(--muted);margin-bottom:22px}
+.message-form{display:flex;flex-direction:column;gap:13px}
+.message-form input,.message-form textarea{width:100%;border:1px solid rgba(85,255,121,.25);background:rgba(2,6,59,.85);color:#fff;border-radius:14px;padding:14px 16px;font-size:16px;outline:none;transition:.2s}
+.message-form input:focus,.message-form textarea:focus{border-color:var(--green);box-shadow:0 0 15px rgba(85,255,121,.15)}
+.message-form textarea{min-height:135px;resize:vertical}
+.message-buttons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:4px}
+.message-button{border:none;border-radius:30px;padding:14px 22px;font-size:16px;font-weight:bold;color:#fff;cursor:pointer;transition:.25s}
+.message-button:hover{transform:translateY(-3px)} .send-whatsapp{background:#13c766} .send-email{background:#2878ff}
+.contact{text-align:center;padding:40px 20px;border-radius:26px;background:linear-gradient(135deg,rgba(8,77,75,.55),rgba(8,20,77,.88));border:1px solid rgba(80,255,150,.3);margin-bottom:45px}
+.contact h2{font-size:32px;margin-bottom:10px} .contact p{color:var(--muted)} .phone{font-size:27px;font-weight:700;color:var(--green);margin:15px 0 20px}
+footer{border-top:1px solid rgba(255,255,255,.08);text-align:center;padding:25px;color:#7f91b8}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:repeat(2,1fr)}.packages{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.lang{right:5px}.logo-stage{height:245px}.logo-wrap{width:225px;height:225px}.logo{width:205px}.logo-wrap::before{width:220px;height:220px}.logo-wrap::after{width:215px;height:215px}.grid,.features{grid-template-columns:1fr}.packages{grid-template-columns:repeat(2,1fr)}.package:last-child{grid-column:1/-1;width:50%;justify-self:center}.video-title{font-size:27px}.message-buttons{flex-direction:column}.message-button{width:100%}}
 </style>
 </head>
-
 <body>
-
 <header class="container">
-
-    <div class="lang">
-
-        <button class="active" data-lang="en">🇬🇧</button>
-
-        <button data-lang="mk">🇲🇰</button>
-
-        <button data-lang="cs">🇨🇿</button>
-
-    </div>
-
-    <div class="logo-stage">
-
-        <div class="logo-wrap">
-
-            <img
-                class="logo"
-                src="./BWIO9738.PNG"
-                alt="BLiZ TV Logo"
-            >
-
-        </div>
-
-    </div>
-
-    <section class="hero">
-
-        <h1>BLiZ TV</h1>
-
-        <p id="subtitle">
-            Your new Internet TV experience
-        </p>
-
-        <div class="buttons">
-
-            <a
-                class="btn test"
-                href="https://wa.me/420776282242"
-                target="_blank"
-            >
-                <span id="testBtn">FREE 24H TEST</span>
-            </a>
-
-            <a
-                class="btn wa"
-                href="https://wa.me/420776282242"
-                target="_blank"
-            >
-                💬 WhatsApp
-            </a>
-
-            <a
-                class="btn tg"
-                href="https://t.me/Blizzuu"
-                target="_blank"
-            >
-                ✈️ Telegram
-            </a>
-
-        </div>
-
-    </section>
-
+<div class="lang">
+<button class="active" data-lang="en">🇬🇧</button>
+<button data-lang="mk">🇲🇰</button>
+<button data-lang="cs">🇨🇿</button>
+</div>
+<div class="logo-stage"><div class="logo-wrap"><img class="logo" src="data:image/webp;base64,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" alt="BLiZ TV Logo"></div></div>
+<section class="hero">
+<h1>BLiZ TV</h1>
+<p id="subtitle">Your new Internet TV experience</p>
+<div class="buttons">
+<a class="btn test" href="https://wa.me/420776282242" target="_blank"><span id="testBtn">FREE 24H TEST</span></a>
+<a class="btn wa" href="https://wa.me/420776282242" target="_blank">💬 WhatsApp</a>
+<a class="btn tg" href="https://t.me/Blizzuu" target="_blank">✈️ Telegram</a>
+</div>
+</section>
 </header>
-
-
 <main class="container">
-
-    <!-- SERVICES -->
-
-    <section class="grid">
-
-        <div class="card">
-
-            <div class="icon">📺</div>
-
-            <h2 id="liveTitle">
-                Live TV
-            </h2>
-
-            <p id="liveText">
-                A wide selection of TV channels and categories.
-            </p>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="icon">🎬</div>
-
-            <h2 id="movieTitle">
-                Movies
-            </h2>
-
-            <p id="movieText">
-                Movies and regularly added new content.
-            </p>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="icon">🍿</div>
-
-            <h2 id="seriesTitle">
-                Series
-            </h2>
-
-            <p id="seriesText">
-                Popular series and a wide VOD selection.
-            </p>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="icon">🛠️</div>
-
-            <h2 id="supportTitle">
-                24/7 Support
-            </h2>
-
-            <p id="supportText">
-                Help and support whenever you need it.
-            </p>
-
-        </div>
-
-    </section>
-
-
-    <!-- VIDEO -->
-
-    <section class="video-section">
-
-        <h2 class="video-title" id="videoTitle">
-            BLiZ TV Video
-        </h2>
-
-        <div class="video-box">
-
-            <video
-                controls
-                autoplay
-                muted
-                loop
-                playsinline
-                preload="metadata"
-            >
-
-                <source
-                    src="./BlizTv_promo.mp4"
-                    type="video/mp4"
-                >
-
-                Your browser does not support HTML5 video.
-
-            </video>
-
-        </div>
-
-    </section>
-
-
-    <!-- PACKAGES -->
-
-    <h2 class="title" id="packagesTitle">
-        Packages
-    </h2>
-
-    <section class="packages">
-
-        <div class="package">
-            <strong>1</strong>
-            <span class="period">month</span>
-        </div>
-
-        <div class="package">
-            <strong>3</strong>
-            <span class="period">months</span>
-        </div>
-
-        <div class="package">
-            <strong>6</strong>
-            <span class="period">months</span>
-        </div>
-
-        <div class="package">
-            <strong>12</strong>
-            <span class="period">months</span>
-        </div>
-
-        <div class="package">
-            <strong>24</strong>
-            <span class="period">months</span>
-        </div>
-
-    </section>
-
-
-    <!-- FEATURES -->
-
-    <h2 class="title" id="offerTitle">
-        What BLiZ TV offers
-    </h2>
-
-    <section class="features">
-
-        <div class="feature" id="f1">
-            ✅ Large selection of Live TV channels
-        </div>
-
-        <div class="feature" id="f2">
-            ✅ 10,000+ movies and VOD content
-        </div>
-
-        <div class="feature" id="f3">
-            ✅ Regularly added new movies
-        </div>
-
-        <div class="feature" id="f4">
-            ✅ Free 24-hour test
-        </div>
-
-        <div class="feature" id="f5">
-            ✅ 24/7 customer support
-        </div>
-
-        <div class="feature" id="f6">
-            ✅ Packages from 1 to 24 months
-        </div>
-
-    </section>
-
-
-    <!-- LANGUAGES -->
-
-    <h2 class="title" id="categoriesTitle">
-        Available languages
-    </h2>
-
-    <div class="languages">
-
-        <div class="flag">
-            🇬🇧 English
-        </div>
-
-        <div class="flag">
-            🇲🇰 Македонски
-        </div>
-
-        <div class="flag">
-            🇨🇿 Čeština
-        </div>
-
-    </div>
-
-
-    <!-- MESSAGE BANNER -->
-
-    <section class="message-banner">
-
-        <div class="message-content">
-
-            <h2 id="messageTitle">
-                💬 Send us a message
-            </h2>
-
-            <p id="messageSubtitle">
-                Have a question? Contact BLiZ TV directly.
-            </p>
-
-
-            <form
-                class="message-form"
-                id="messageForm"
-            >
-
-                <input
-                    type="text"
-                    id="userName"
-                    placeholder="Your name"
-                    required
-                >
-
-                <input
-                    type="email"
-                    id="userEmail"
-                    placeholder="Your email"
-                    required
-                >
-
-                <textarea
-                    id="userMessage"
-                    placeholder="Write your message..."
-                    required
-                ></textarea>
-
-
-                <div class="message-buttons">
-
-                    <button
-                        type="button"
-                        class="message-button send-whatsapp"
-                        onclick="sendWhatsApp()"
-                    >
-                        📲 Send to WhatsApp
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="message-button send-email"
-                        onclick="sendEmail()"
-                    >
-                        ✉️ Send by Email
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </section>
-
-
-    <!-- CONTACT -->
-
-    <section class="contact">
-
-        <h2 id="contactTitle">
-            Contact us
-        </h2>
-
-        <p id="contactText">
-            For a free 24-hour test or more information
-        </p>
-
-        <div class="phone">
-            +420 776 282 242
-        </div>
-
-        <div class="buttons">
-
-            <a
-                class="btn wa"
-                href="https://wa.me/420776282242"
-                target="_blank"
-            >
-                💬 WhatsApp
-            </a>
-
-            <a
-                class="btn tg"
-                href="https://t.me/Blizzuu"
-                target="_blank"
-            >
-                ✈️ Telegram
-            </a>
-
-        </div>
-
-    </section>
-
+<section class="grid">
+<div class="card"><div class="icon">📺</div><h2 id="liveTitle">Live TV</h2><p id="liveText">A wide selection of TV channels and categories.</p></div>
+<div class="card"><div class="icon">🎬</div><h2 id="movieTitle">Movies</h2><p id="movieText">Movies and regularly added new content.</p></div>
+<div class="card"><div class="icon">🍿</div><h2 id="seriesTitle">Series</h2><p id="seriesText">Popular series and a wide VOD selection.</p></div>
+<div class="card"><div class="icon">🛠️</div><h2 id="supportTitle">24/7 Support</h2><p id="supportText">Help and support whenever you need it.</p></div>
+</section>
+<section class="video-section">
+<h2 class="video-title" id="videoTitle">BLiZ TV Video</h2>
+<div class="video-box">
+<video controls autoplay muted loop playsinline preload="auto">
+<source src="./video.mp4" type="video/mp4">
+<source src="./bce46402-b7e2-4016-923f-cddb7a999f10.mp4" type="video/mp4">
+Your browser does not support HTML5 video.
+</video>
+</div>
+</section>
+<h2 class="title" id="packagesTitle">Packages</h2>
+<section class="packages">
+<div class="package"><strong>1</strong><span class="period">month</span></div>
+<div class="package"><strong>3</strong><span class="period">months</span></div>
+<div class="package"><strong>6</strong><span class="period">months</span></div>
+<div class="package"><strong>12</strong><span class="period">months</span></div>
+<div class="package"><strong>24</strong><span class="period">months</span></div>
+</section>
+<h2 class="title" id="offerTitle">What BLiZ TV offers</h2>
+<section class="features">
+<div class="feature" id="f1">✅ Large selection of Live TV channels</div>
+<div class="feature" id="f2">✅ 10,000+ movies and VOD content</div>
+<div class="feature" id="f3">✅ Regularly added new movies</div>
+<div class="feature" id="f4">✅ Free 24-hour test</div>
+<div class="feature" id="f5">✅ 24/7 customer support</div>
+<div class="feature" id="f6">✅ Packages from 1 to 24 months</div>
+</section>
+<h2 class="title" id="categoriesTitle">Available languages</h2>
+<div class="languages"><div class="flag">🇬🇧 English</div><div class="flag">🇲🇰 Македонски</div><div class="flag">🇨🇿 Čeština</div></div>
+<section class="message-banner">
+<div class="message-content">
+<h2 id="messageTitle">💬 Send us a message</h2>
+<p id="messageSubtitle">Have a question? Contact BLiZ TV directly.</p>
+<form class="message-form" id="messageForm">
+<input type="text" id="userName" placeholder="Your name" required>
+<input type="email" id="userEmail" placeholder="Your email" required>
+<textarea id="userMessage" placeholder="Write your message..." required></textarea>
+<div class="message-buttons">
+<button type="button" class="message-button send-whatsapp" onclick="sendWhatsApp()">📲 Send to WhatsApp</button>
+<button type="button" class="message-button send-email" onclick="sendEmail()">✉️ Send by Email</button>
+</div>
+</form>
+</div>
+</section>
+<section class="contact">
+<h2 id="contactTitle">Contact us</h2>
+<p id="contactText">For a free 24-hour test or more information</p>
+<div class="phone">+420 776 282 242</div>
+<div class="buttons">
+<a class="btn wa" href="https://wa.me/420776282242" target="_blank">💬 WhatsApp</a>
+<a class="btn tg" href="https://t.me/Blizzuu" target="_blank">✈️ Telegram</a>
+</div>
+</section>
 </main>
-
-
-<footer>
-    © 2026 BLiZ TV · Internet Television
-</footer>
-
-
+<footer>© 2026 BLiZ TV · Internet Television</footer>
 <script>
-
-/* =====================================================
-   TRANSLATIONS
-===================================================== */
-
-const T = {
-
-    en:{
-
-        videoTitle:"BLiZ TV Video",
-
-        subtitle:
-            "Your new Internet TV experience",
-
-        liveTitle:"Live TV",
-
-        liveText:
-            "A wide selection of TV channels and categories.",
-
-        movieTitle:"Movies",
-
-        movieText:
-            "Movies and regularly added new content.",
-
-        seriesTitle:"Series",
-
-        seriesText:
-            "Popular series and a wide VOD selection.",
-
-        supportTitle:"24/7 Support",
-
-        supportText:
-            "Help and support whenever you need it.",
-
-        packagesTitle:"Packages",
-
-        offerTitle:
-            "What BLiZ TV offers",
-
-        categoriesTitle:
-            "Available languages",
-
-        contactTitle:
-            "Contact us",
-
-        contactText:
-            "For a free 24-hour test or more information",
-
-        messageTitle:
-            "💬 Send us a message",
-
-        messageSubtitle:
-            "Have a question? Contact BLiZ TV directly.",
-
-        namePlaceholder:
-            "Your name",
-
-        emailPlaceholder:
-            "Your email",
-
-        messagePlaceholder:
-            "Write your message...",
-
-        test:
-            "FREE 24H TEST",
-
-        features:[
-            "Large selection of Live TV channels",
-            "10,000+ movies and VOD content",
-            "Regularly added new movies",
-            "Free 24-hour test",
-            "24/7 customer support",
-            "Packages from 1 to 24 months"
-        ],
-
-        period:[
-            "month",
-            "months"
-        ]
-    },
-
-
-    mk:{
-
-        videoTitle:
-            "BLiZ TV Видео",
-
-        subtitle:
-            "Вашето ново искуство со интернет телевизија",
-
-        liveTitle:
-            "Live TV",
-
-        liveText:
-            "Голем избор на ТВ канали и различни категории.",
-
-        movieTitle:
-            "Филмови",
-
-        movieText:
-            "Филмови и редовно додавани нови содржини.",
-
-        seriesTitle:
-            "Серии",
-
-        seriesText:
-            "Популарни серии и разновидна VOD понуда.",
-
-        supportTitle:
-            "24/7 Поддршка",
-
-        supportText:
-            "Помош и поддршка кога и да ви е потребна.",
-
-        packagesTitle:
-            "Пакети",
-
-        offerTitle:
-            "Што нуди BLiZ TV?",
-
-        categoriesTitle:
-            "Достапни јазици",
-
-        contactTitle:
-            "Контактирај нè",
-
-        contactText:
-            "За бесплатен 24-часовен тест или повеќе информации",
-
-        messageTitle:
-            "💬 Испратете ни порака",
-
-        messageSubtitle:
-            "Имате прашање? Контактирајте го BLiZ TV директно.",
-
-        namePlaceholder:
-            "Вашето име",
-
-        emailPlaceholder:
-            "Вашиот email",
-
-        messagePlaceholder:
-            "Напишете ја вашата порака...",
-
-        test:
-            "БЕСПЛАТЕН 24H ТЕСТ",
-
-        features:[
-            "Голем избор на Live TV канали",
-            "10.000+ филмови и VOD содржини",
-            "Редовно додавање нови филмови",
-            "24 часа бесплатен тест",
-            "24/7 корисничка поддршка",
-            "Пакети од 1 до 24 месеци"
-        ],
-
-        period:[
-            "месец",
-            "месеци"
-        ]
-    },
-
-
-    cs:{
-
-        videoTitle:
-            "BLiZ TV Video",
-
-        subtitle:
-            "Vaše nová internetová televize",
-
-        liveTitle:
-            "Živá TV",
-
-        liveText:
-            "Velký výběr televizních kanálů a kategorií.",
-
-        movieTitle:
-            "Filmy",
-
-        movieText:
-            "Filmy a pravidelně přidávaný nový obsah.",
-
-        seriesTitle:
-            "Seriály",
-
-        seriesText:
-            "Oblíbené seriály a široká nabídka VOD.",
-
-        supportTitle:
-            "Podpora 24/7",
-
-        supportText:
-            "Pomoc a podpora, kdykoli ji potřebujete.",
-
-        packagesTitle:
-            "Balíčky",
-
-        offerTitle:
-            "Co BLiZ TV nabízí",
-
-        categoriesTitle:
-            "Dostupné jazyky",
-
-        contactTitle:
-            "Kontaktujte nás",
-
-        contactText:
-            "Pro bezplatný 24hodinový test nebo více informací",
-
-        messageTitle:
-            "💬 Napište nám",
-
-        messageSubtitle:
-            "Máte dotaz? Kontaktujte BLiZ TV přímo.",
-
-        namePlaceholder:
-            "Vaše jméno",
-
-        emailPlaceholder:
-            "Váš email",
-
-        messagePlaceholder:
-            "Napište svou zprávu...",
-
-        test:
-            "BEZPLATNÝ 24H TEST",
-
-        features:[
-            "Velký výběr Live TV kanálů",
-            "10 000+ filmů a VOD obsahu",
-            "Pravidelně přidávané nové filmy",
-            "Bezplatný 24hodinový test",
-            "Zákaznická podpora 24/7",
-            "Balíčky na 1 až 24 měsíců"
-        ],
-
-        period:[
-            "měsíc",
-            "měsíce"
-        ]
-    }
-
+const T={
+en:{videoTitle:'BLiZ TV Video',subtitle:'Your new Internet TV experience',liveTitle:'Live TV',liveText:'A wide selection of TV channels and categories.',movieTitle:'Movies',movieText:'Movies and regularly added new content.',seriesTitle:'Series',seriesText:'Popular series and a wide VOD selection.',supportTitle:'24/7 Support',supportText:'Help and support whenever you need it.',packagesTitle:'Packages',offerTitle:'What BLiZ TV offers',categoriesTitle:'Available languages',contactTitle:'Contact us',contactText:'For a free 24-hour test or more information',messageTitle:'💬 Send us a message',messageSubtitle:'Have a question? Contact BLiZ TV directly.',namePlaceholder:'Your name',emailPlaceholder:'Your email',messagePlaceholder:'Write your message...',test:'FREE 24H TEST',features:['Large selection of Live TV channels','10,000+ movies and VOD content','Regularly added new movies','Free 24-hour test','24/7 customer support','Packages from 1 to 24 months'],period:['month','months']},
+mk:{videoTitle:'BLiZ TV Видео',subtitle:'Вашето ново искуство со интернет телевизија',liveTitle:'Live TV',liveText:'Голем избор на ТВ канали и различни категории.',movieTitle:'Филмови',movieText:'Филмови и редовно додавани нови содржини.',seriesTitle:'Серии',seriesText:'Популарни серии и разновидна VOD понуда.',supportTitle:'24/7 Поддршка',supportText:'Помош и поддршка кога и да ви е потребна.',packagesTitle:'Пакети',offerTitle:'Што нуди BLiZ TV?',categoriesTitle:'Достапни јазици',contactTitle:'Контактирај нè',contactText:'За бесплатен 24-часовен тест или повеќе информации',messageTitle:'💬 Испратете ни порака',messageSubtitle:'Имате прашање? Контактирајте го BLiZ TV директно.',namePlaceholder:'Вашето име',emailPlaceholder:'Вашиот email',messagePlaceholder:'Напишете ја вашата порака...',test:'БЕСПЛАТЕН 24H ТЕСТ',features:['Голем избор на Live TV канали','10.000+ филмови и VOD содржини','Редовно додавање нови филмови','24 часа бесплатен тест','24/7 корисничка поддршка','Пакети од 1 до 24 месеци'],period:['месец','месеци']},
+cs:{videoTitle:'BLiZ TV Video',subtitle:'Vaše nová internetová televize',liveTitle:'Živá TV',liveText:'Velký výběr televizních kanálů a kategorií.',movieTitle:'Filmy',movieText:'Filmy a pravidelně přidávaný nový obsah.',seriesTitle:'Seriály',seriesText:'Oblíbené seriály a široká nabídka VOD.',supportTitle:'Podpora 24/7',supportText:'Pomoc a podpora, kdykoli ji potřebujete.',packagesTitle:'Balíčky',offerTitle:'Co BLiZ TV nabízí',categoriesTitle:'Dostupné jazyky',contactTitle:'Kontaktujte nás',contactText:'Pro bezplatný 24hodinový test nebo více informací',messageTitle:'💬 Napište nám',messageSubtitle:'Máte dotaz? Kontaktujte BLiZ TV přímo.',namePlaceholder:'Vaše jméno',emailPlaceholder:'Váš email',messagePlaceholder:'Napište svou zprávu...',test:'BEZPLATNÝ 24H TEST',features:['Velký výběr Live TV kanálů','10 000+ filmů a VOD obsahu','Pravidelně přidávané nové filmy','Bezplatný 24hodinový test','Zákaznická podpora 24/7','Balíčky na 1 až 24 měsíců'],period:['měsíc','měsíce']}
 };
-
-
-/* =====================================================
-   LANGUAGE SWITCH
-===================================================== */
-
-function setLang(lang){
-
-    const t = T[lang];
-
-    document.documentElement.lang = lang;
-
-    document.getElementById("videoTitle").textContent =
-        t.videoTitle;
-
-    document.getElementById("subtitle").textContent =
-        t.subtitle;
-
-    document.getElementById("liveTitle").textContent =
-        t.liveTitle;
-
-    document.getElementById("liveText").textContent =
-        t.liveText;
-
-    document.getElementById("movieTitle").textContent =
-        t.movieTitle;
-
-    document.getElementById("movieText").textContent =
-        t.movieText;
-
-    document.getElementById("seriesTitle").textContent =
-        t.seriesTitle;
-
-    document.getElementById("seriesText").textContent =
-        t.seriesText;
-
-    document.getElementById("supportTitle").textContent =
-        t.supportTitle;
-
-    document.getElementById("supportText").textContent =
-        t.supportText;
-
-    document.getElementById("packagesTitle").textContent =
-        t.packagesTitle;
-
-    document.getElementById("offerTitle").textContent =
-        t.offerTitle;
-
-    document.getElementById("categoriesTitle").textContent =
-        t.categoriesTitle;
-
-    document.getElementById("contactTitle").textContent =
-        t.contactTitle;
-
-    document.getElementById("contactText").textContent =
-        t.contactText;
-
-    document.getElementById("messageTitle").textContent =
-        t.messageTitle;
-
-    document.getElementById("messageSubtitle").textContent =
-        t.messageSubtitle;
-
-    document.getElementById("userName").placeholder =
-        t.namePlaceholder;
-
-    document.getElementById("userEmail").placeholder =
-        t.emailPlaceholder;
-
-    document.getElementById("userMessage").placeholder =
-        t.messagePlaceholder;
-
-    document.getElementById("testBtn").textContent =
-        t.test;
-
-
-    document.querySelectorAll(".period").forEach(
-        (element,index)=>{
-
-            element.textContent =
-                index === 0
-                    ? t.period[0]
-                    : t.period[1];
-
-        }
-    );
-
-
-    const featureIds = [
-        "f1",
-        "f2",
-        "f3",
-        "f4",
-        "f5",
-        "f6"
-    ];
-
-
-    featureIds.forEach(
-        (id,index)=>{
-
-            document.getElementById(id).textContent =
-                "✅ " + t.features[index];
-
-        }
-    );
-
-
-    document.querySelectorAll(".lang button").forEach(
-        button=>{
-
-            button.classList.toggle(
-                "active",
-                button.dataset.lang === lang
-            );
-
-        }
-    );
-}
-
-
-document.querySelectorAll(".lang button").forEach(
-    button=>{
-
-        button.addEventListener(
-            "click",
-            ()=>{
-                setLang(button.dataset.lang);
-            }
-        );
-
-    }
-);
-
-
-/* English default */
-
-setLang("en");
-
-
-/* =====================================================
-   MESSAGE -> WHATSAPP
-===================================================== */
-
-function getMessageData(){
-
-    const name =
-        document.getElementById("userName")
-        .value.trim();
-
-    const email =
-        document.getElementById("userEmail")
-        .value.trim();
-
-    const message =
-        document.getElementById("userMessage")
-        .value.trim();
-
-
-    if(!name || !email || !message){
-
-        alert(
-            "Please fill in your name, email and message."
-        );
-
-        return null;
-    }
-
-
-    return {
-        name:name,
-        email:email,
-        message:message
-    };
-}
-
-
-function sendWhatsApp(){
-
-    const data =
-        getMessageData();
-
-    if(!data){
-        return;
-    }
-
-
-    const text =
-`BLiZ TV MESSAGE
-
-Name: ${data.name}
-
-Email: ${data.email}
-
-Message:
-${data.message}`;
-
-
-    const url =
-        "https://wa.me/420776282242?text=" +
-        encodeURIComponent(text);
-
-
-    window.open(
-        url,
-        "_blank"
-    );
-}
-
-
-/* =====================================================
-   MESSAGE -> EMAIL
-===================================================== */
-
-function sendEmail(){
-
-    const data =
-        getMessageData();
-
-    if(!data){
-        return;
-    }
-
-
-    const subject =
-        "BLiZ TV Website Message";
-
-
-    const body =
-`Name: ${data.name}
-
-Email: ${data.email}
-
-Message:
-${data.message}`;
-
-
-    /*
-       CHANGE THIS EMAIL TO YOUR REAL EMAIL
-    */
-
-    const yourEmail =
-        "YOUR-EMAIL@example.com";
-
-
-    const mailto =
-        "mailto:" +
-        yourEmail +
-        "?subject=" +
-        encodeURIComponent(subject) +
-        "&body=" +
-        encodeURIComponent(body);
-
-
-    window.location.href =
-        mailto;
-}
-
+function setLang(lang){const t=T[lang];document.documentElement.lang=lang;['videoTitle','subtitle','liveTitle','liveText','movieTitle','movieText','seriesTitle','seriesText','supportTitle','supportText','packagesTitle','offerTitle','categoriesTitle','contactTitle','contactText','messageTitle','messageSubtitle'].forEach(id=>document.getElementById(id).textContent=t[id]);document.getElementById('userName').placeholder=t.namePlaceholder;document.getElementById('userEmail').placeholder=t.emailPlaceholder;document.getElementById('userMessage').placeholder=t.messagePlaceholder;document.getElementById('testBtn').textContent=t.test;document.querySelectorAll('.period').forEach((e,i)=>e.textContent=i===0?t.period[0]:t.period[1]);['f1','f2','f3','f4','f5','f6'].forEach((id,i)=>document.getElementById(id).textContent='✅ '+t.features[i]);document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang))}
+document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+setLang('en');
+function getData(){const name=document.getElementById('userName').value.trim();const email=document.getElementById('userEmail').value.trim();const message=document.getElementById('userMessage').value.trim();if(!name||!email||!message){alert('Please fill in all fields.');return null}return {name,email,message}}
+function sendWhatsApp(){const d=getData();if(!d)return;const text=`BLiZ TV MESSAGE\n\nName: ${d.name}\nEmail: ${d.email}\n\nMessage:\n${d.message}`;window.open('https://wa.me/420776282242?text='+encodeURIComponent(text),'_blank')}
+function sendEmail(){const d=getData();if(!d)return;const recipient='YOUR-EMAIL@example.com';const subject='BLiZ TV Website Message';const body=`Name: ${d.name}\nEmail: ${d.email}\n\nMessage:\n${d.message}`;window.location.href='mailto:'+recipient+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body)}
 </script>
 
+<script>
+(function(){
+  const video = document.querySelector('video');
+  if (!video) return;
+  video.muted = true;
+  video.defaultMuted = true;
+  video.setAttribute('muted', '');
+  video.setAttribute('autoplay', '');
+  video.setAttribute('playsinline', '');
+  video.setAttribute('preload', 'auto');
+
+  const startVideo = () => {
+    const p = video.play();
+    if (p && typeof p.catch === 'function') {
+      p.catch(() => {});
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startVideo, {once:true});
+  } else {
+    startVideo();
+  }
+
+  video.addEventListener('loadedmetadata', startVideo, {once:true});
+  video.addEventListener('canplay', startVideo, {once:true});
+  window.addEventListener('load', startVideo, {once:true});
+})();
+</script>
 </body>
 </html>
