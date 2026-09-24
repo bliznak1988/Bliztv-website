@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="BlizTv – Live TV, Movies & Series">
 <title>BlizTv – Live TV, Movies & Series</title>
-<meta name="description" content="BlizTv – Live TV, Movies & Series. Enjoy entertainment on your favorite devices.">
 
 <style>
 * {
@@ -24,47 +25,42 @@ body {
     line-height: 1.6;
 }
 
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
 header {
+    padding: 22px 7%;
+    border-bottom: 1px solid #12343b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     position: sticky;
     top: 0;
     z-index: 1000;
-    background: rgba(6, 16, 20, 0.95);
-    border-bottom: 1px solid #12343b;
-    padding: 20px 7%;
+    background: rgba(6,16,20,0.96);
     backdrop-filter: blur(10px);
 }
 
-.navbar {
-    max-width: 1200px;
-    margin: auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.logo-text {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 1px;
 }
 
-.logo {
-    font-size: 30px;
-    font-weight: 800;
+.logo-text .green {
     color: #18e6a0;
 }
 
-.logo span {
+.logo-text .blue {
     color: #18aee6;
 }
 
 nav {
     display: flex;
-    gap: 28px;
+    gap: 25px;
 }
 
 nav a {
     color: #ffffff;
-    font-size: 15px;
+    text-decoration: none;
+    font-weight: 600;
     transition: 0.3s;
 }
 
@@ -73,37 +69,29 @@ nav a:hover {
 }
 
 .hero {
-    min-height: 90vh;
+    min-height: 650px;
+    padding: 70px 7%;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     text-align: center;
-    padding: 80px 7%;
-    background:
-        radial-gradient(circle at 50% 20%, rgba(24,230,160,0.12), transparent 35%),
-        #061014;
 }
 
 .hero-content {
-    max-width: 900px;
+    max-width: 1000px;
+    width: 100%;
 }
 
-.badge {
-    display: inline-block;
-    border: 1px solid #18e6a0;
-    color: #18e6a0;
-    padding: 8px 18px;
-    border-radius: 30px;
-    font-size: 13px;
-    font-weight: bold;
+.hero-logo {
+    width: 180px;
+    max-width: 60%;
     margin-bottom: 25px;
-    letter-spacing: 1px;
+    border-radius: 18px;
 }
 
 .hero h1 {
-    font-size: clamp(42px, 7vw, 78px);
-    line-height: 1.05;
-    margin-bottom: 25px;
+    font-size: 52px;
+    margin-bottom: 18px;
 }
 
 .hero h1 span {
@@ -111,7 +99,7 @@ nav a:hover {
 }
 
 .hero p {
-    color: #b7c5c9;
+    color: #b8c8cc;
     font-size: 19px;
     max-width: 700px;
     margin: 0 auto 35px;
@@ -128,7 +116,8 @@ nav a:hover {
     display: inline-block;
     padding: 14px 28px;
     border-radius: 8px;
-    font-weight: bold;
+    text-decoration: none;
+    font-weight: 700;
     transition: 0.3s;
 }
 
@@ -138,473 +127,514 @@ nav a:hover {
 }
 
 .btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(24,230,160,0.25);
+    background: #12c98a;
+    transform: translateY(-2px);
 }
 
 .btn-secondary {
-    border: 1px solid #18aee6;
-    color: #18aee6;
+    border: 1px solid #18e6a0;
+    color: #18e6a0;
 }
 
 .btn-secondary:hover {
-    background: #18aee6;
+    background: #18e6a0;
     color: #061014;
 }
 
 section {
-    padding: 90px 7%;
-}
-
-.container {
-    max-width: 1200px;
-    margin: auto;
+    padding: 80px 7%;
 }
 
 .section-title {
     text-align: center;
-    margin-bottom: 50px;
+    font-size: 36px;
+    margin-bottom: 45px;
 }
 
-.section-title h2 {
-    font-size: 38px;
-    margin-bottom: 12px;
+.section-title span {
+    color: #18e6a0;
 }
 
-.section-title p {
-    color: #91a4aa;
+.video-section {
+    background: #08191e;
 }
 
-.cards {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-}
-
-.card {
-    background: #0a1b21;
+.video-container {
+    max-width: 1000px;
+    margin: auto;
     border: 1px solid #12343b;
-    border-radius: 15px;
-    padding: 35px 25px;
-    transition: 0.3s;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.35);
 }
 
-.card:hover {
-    transform: translateY(-7px);
-    border-color: #18e6a0;
-}
-
-.icon {
-    font-size: 42px;
-    margin-bottom: 20px;
-}
-
-.card h3 {
-    font-size: 22px;
-    margin-bottom: 12px;
-}
-
-.card p {
-    color: #9aadb2;
+.video-container video {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 600px;
 }
 
 .plans {
-    background: #07171d;
-}
-
-.plan-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 18px;
+    max-width: 1200px;
+    margin: auto;
 }
 
 .plan {
-    background: #0a1b21;
+    background: #0b1d22;
     border: 1px solid #12343b;
-    border-radius: 15px;
-    padding: 35px 25px;
+    border-radius: 14px;
+    padding: 30px 18px;
     text-align: center;
+    transition: 0.3s;
 }
 
-.plan.featured {
-    border: 2px solid #18e6a0;
-    transform: scale(1.03);
+.plan:hover {
+    transform: translateY(-6px);
+    border-color: #18e6a0;
 }
 
 .plan h3 {
+    color: #18e6a0;
     font-size: 24px;
     margin-bottom: 15px;
 }
 
-.price {
-    font-size: 40px;
-    font-weight: bold;
-    color: #18e6a0;
+.plan .months {
+    font-size: 18px;
+    font-weight: 700;
     margin-bottom: 20px;
 }
 
-.plan ul {
-    list-style: none;
+.plan p {
+    color: #aebfc3;
+    margin-bottom: 22px;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.feature {
+    background: #0b1d22;
+    border: 1px solid #12343b;
+    border-radius: 14px;
+    padding: 30px;
+    text-align: center;
+}
+
+.feature-icon {
+    font-size: 35px;
+    margin-bottom: 15px;
+}
+
+.feature h3 {
+    color: #18e6a0;
+    margin-bottom: 10px;
+}
+
+.feature p {
+    color: #aebfc3;
+}
+
+.reseller {
+    background: #08191e;
+    text-align: center;
+}
+
+.reseller-box {
+    max-width: 850px;
+    margin: auto;
+    padding: 45px 30px;
+    border: 1px solid #12343b;
+    border-radius: 16px;
+    background: #0b1d22;
+}
+
+.reseller-box h2 {
+    font-size: 34px;
+    margin-bottom: 15px;
+}
+
+.reseller-box h2 span {
+    color: #18e6a0;
+}
+
+.reseller-box p {
+    color: #b8c8cc;
     margin-bottom: 25px;
 }
 
-.plan li {
-    color: #b4c2c6;
-    margin: 10px 0;
-}
-
 .faq {
-    max-width: 850px;
+    max-width: 900px;
     margin: auto;
 }
 
 .faq-item {
-    background: #0a1b21;
+    background: #0b1d22;
     border: 1px solid #12343b;
     border-radius: 10px;
-    padding: 22px;
     margin-bottom: 15px;
+    overflow: hidden;
 }
 
-.faq-item h3 {
-    margin-bottom: 8px;
+.faq-item summary {
+    padding: 20px;
+    cursor: pointer;
+    font-weight: 700;
+    color: #ffffff;
 }
 
 .faq-item p {
-    color: #9aadb2;
+    padding: 0 20px 20px;
+    color: #b8c8cc;
 }
 
 .contact {
     text-align: center;
-    background:
-        radial-gradient(circle at center, rgba(24,230,160,0.10), transparent 45%),
-        #061014;
+    background: #08191e;
 }
 
 .contact-box {
-    max-width: 800px;
+    max-width: 700px;
     margin: auto;
 }
 
-.contact-box h2 {
-    font-size: 42px;
-    margin-bottom: 15px;
-}
-
 .contact-box p {
-    color: #a7b8bd;
-    margin-bottom: 30px;
+    color: #b8c8cc;
+    margin-bottom: 25px;
 }
 
-.contact-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
+.whatsapp {
+    display: inline-block;
+    background: #25D366;
+    color: #ffffff;
+    padding: 15px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 18px;
+    transition: 0.3s;
+}
+
+.whatsapp:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.website {
+    margin-top: 20px;
+    color: #18e6a0;
+    font-weight: 700;
 }
 
 footer {
-    border-top: 1px solid #12343b;
     padding: 30px 7%;
     text-align: center;
-    color: #71858b;
-    background: #050d10;
+    border-top: 1px solid #12343b;
+    color: #71858a;
 }
 
-footer strong {
-    color: #18e6a0;
+@media (max-width: 950px) {
+    .plans {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+    }
+
+    .hero h1 {
+        font-size: 42px;
+    }
 }
 
-@media (max-width: 800px) {
-
+@media (max-width: 600px) {
     header {
         padding: 18px 5%;
     }
 
-    .navbar {
-        flex-direction: column;
-        gap: 15px;
-    }
-
     nav {
-        gap: 15px;
-        flex-wrap: wrap;
-        justify-content: center;
+        gap: 12px;
+        font-size: 13px;
     }
 
     .hero {
-        padding: 70px 5%;
-    }
-
-    section {
-        padding: 70px 5%;
-    }
-
-    .cards,
-    .plan-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .plan.featured {
-        transform: none;
+        padding: 60px 5%;
     }
 
     .hero h1 {
-        font-size: 48px;
+        font-size: 34px;
     }
 
-    .contact-box h2 {
-        font-size: 34px;
+    .hero p {
+        font-size: 16px;
+    }
+
+    section {
+        padding: 60px 5%;
+    }
+
+    .plans {
+        grid-template-columns: 1fr;
+    }
+
+    .section-title {
+        font-size: 30px;
     }
 }
 </style>
+
+<!-- Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GM3VVWPZNR"></script>
+
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-GM3VVWPZNR');
+</script>
+
 </head>
 
 <body>
 
 <header>
-    <div class="navbar">
-
-        <a href="#home" class="logo">
-            Bliz<span>Tv</span>
-        </a>
-
-        <nav>
-            <a href="#home">Home</a>
-            <a href="#features">Features</a>
-            <a href="#plans">Plans</a>
-            <a href="#faq">FAQ</a>
-            <a href="#contact">Contact</a>
-        </nav>
-
+    <div class="logo-text">
+        <span class="green">Bliz</span><span class="blue">Tv</span>
     </div>
+
+```
+<nav>
+    <a href="#home">Home</a>
+    <a href="#plans">Plans</a>
+    <a href="#reseller">Reseller</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
+</nav>
+```
+
 </header>
 
+<!-- HERO -->
 
 <section class="hero" id="home">
-
     <div class="hero-content">
 
-        <div class="badge">WELCOME TO BLIZTV</div>
+```
+    <!-- LOGO ONLY ONCE -->
+    <img src="Bliz.jpg" alt="BlizTv Logo" class="hero-logo">
 
-        <h1>
-            Entertainment<br>
-            <span>without limits.</span>
-        </h1>
+    <h1>Welcome to <span>BlizTv</span></h1>
 
-        <p>
-            Enjoy Live TV, Movies and Series on your favorite devices.
-            Simple, fast and made for entertainment.
-        </p>
+    <p>
+        Enjoy Live TV, Movies and Series with BlizTv.
+        Simple, fast and convenient entertainment on your favorite devices.
+    </p>
 
-        <div class="buttons">
-            <a href="#plans" class="btn btn-primary">VIEW PLANS</a>
-            <a href="#contact" class="btn btn-secondary">CONTACT US</a>
-        </div>
-
+    <div class="buttons">
+        <a href="#plans" class="btn btn-primary">VIEW PLANS</a>
+        <a href="#contact" class="btn btn-secondary">CONTACT US</a>
     </div>
+
+</div>
+```
 
 </section>
 
+<!-- VIDEO -->
 
-<section id="features">
+<section class="video-section">
+    <h2 class="section-title">Discover <span>BlizTv</span></h2>
 
-    <div class="container">
-
-        <div class="section-title">
-            <h2>Why BlizTv?</h2>
-            <p>Everything you need for your entertainment.</p>
-        </div>
-
-        <div class="cards">
-
-            <div class="card">
-                <div class="icon">📺</div>
-                <h3>Live TV</h3>
-                <p>
-                    Enjoy your favorite television channels
-                    on your preferred device.
-                </p>
-            </div>
-
-            <div class="card">
-                <div class="icon">🎬</div>
-                <h3>Movies & Series</h3>
-                <p>
-                    Discover a large entertainment library
-                    with movies and series.
-                </p>
-            </div>
-
-            <div class="card">
-                <div class="icon">⚡</div>
-                <h3>Easy to Use</h3>
-                <p>
-                    Simple setup and easy access from
-                    supported devices.
-                </p>
-            </div>
-
-        </div>
-
-    </div>
+```
+<div class="video-container">
+    <video controls playsinline preload="metadata">
+        <source src="video BlizTv.MOV" type="video/quicktime">
+        Your browser does not support video playback.
+    </video>
+</div>
+```
 
 </section>
 
+<!-- PLANS -->
 
-<section class="plans" id="plans">
+<section id="plans">
+    <h2 class="section-title">BlizTv <span>Plans</span></h2>
 
-    <div class="container">
+```
+<div class="plans">
 
-        <div class="section-title">
-            <h2>Our Plans</h2>
-            <p>Choose the subscription that works for you.</p>
-        </div>
-
-        <div class="plan-grid">
-
-            <div class="plan">
-
-                <h3>1 Month</h3>
-
-                <div class="price">€--</div>
-
-                <ul>
-                    <li>✓ Live TV</li>
-                    <li>✓ Movies & Series</li>
-                    <li>✓ Supported Devices</li>
-                    <li>✓ Customer Support</li>
-                </ul>
-
-                <a href="#contact" class="btn btn-primary">
-                    ORDER NOW
-                </a>
-
-            </div>
-
-
-            <div class="plan featured">
-
-                <h3>6 Months</h3>
-
-                <div class="price">€--</div>
-
-                <ul>
-                    <li>✓ Live TV</li>
-                    <li>✓ Movies & Series</li>
-                    <li>✓ Supported Devices</li>
-                    <li>✓ Customer Support</li>
-                </ul>
-
-                <a href="#contact" class="btn btn-primary">
-                    ORDER NOW
-                </a>
-
-            </div>
-
-
-            <div class="plan">
-
-                <h3>12 Months</h3>
-
-                <div class="price">€--</div>
-
-                <ul>
-                    <li>✓ Live TV</li>
-                    <li>✓ Movies & Series</li>
-                    <li>✓ Supported Devices</li>
-                    <li>✓ Customer Support</li>
-                </ul>
-
-                <a href="#contact" class="btn btn-primary">
-                    ORDER NOW
-                </a>
-
-            </div>
-
-        </div>
-
+    <div class="plan">
+        <h3>1 Month</h3>
+        <div class="months">1 MONTH</div>
+        <p>Full access to BlizTv.</p>
+        <a href="#contact" class="btn btn-primary">CONTACT US</a>
     </div>
+
+    <div class="plan">
+        <h3>3 Months</h3>
+        <div class="months">3 MONTHS</div>
+        <p>Full access to BlizTv.</p>
+        <a href="#contact" class="btn btn-primary">CONTACT US</a>
+    </div>
+
+    <div class="plan">
+        <h3>6 Months</h3>
+        <div class="months">6 MONTHS</div>
+        <p>Full access to BlizTv.</p>
+        <a href="#contact" class="btn btn-primary">CONTACT US</a>
+    </div>
+
+    <div class="plan">
+        <h3>12 Months</h3>
+        <div class="months">12 MONTHS</div>
+        <p>Full access to BlizTv.</p>
+        <a href="#contact" class="btn btn-primary">CONTACT US</a>
+    </div>
+
+    <div class="plan">
+        <h3>24 Months</h3>
+        <div class="months">24 MONTHS</div>
+        <p>Full access to BlizTv.</p>
+        <a href="#contact" class="btn btn-primary">CONTACT US</a>
+    </div>
+
+</div>
+```
 
 </section>
 
+<!-- FEATURES -->
+
+<section class="video-section">
+    <h2 class="section-title">Why <span>BlizTv?</span></h2>
+
+```
+<div class="features">
+
+    <div class="feature">
+        <div class="feature-icon">📺</div>
+        <h3>Live TV</h3>
+        <p>Enjoy your favorite television channels wherever you are.</p>
+    </div>
+
+    <div class="feature">
+        <div class="feature-icon">🎬</div>
+        <h3>Movies & Series</h3>
+        <p>Enjoy entertainment with movies and series on your devices.</p>
+    </div>
+
+    <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3>Easy to Use</h3>
+        <p>Simple access and convenient viewing experience.</p>
+    </div>
+
+</div>
+```
+
+</section>
+
+<!-- RESELLER -->
+
+<section class="reseller" id="reseller">
+
+```
+<div class="reseller-box">
+
+    <h2>Become a <span>BlizTv Reseller</span></h2>
+
+    <p>
+        Interested in becoming a BlizTv reseller?
+        Contact us for reseller information and available options.
+    </p>
+
+    <a href="https://wa.me/420776282242" class="btn btn-primary">
+        BECOME A RESELLER
+    </a>
+
+</div>
+```
+
+</section>
+
+<!-- FAQ -->
 
 <section id="faq">
 
-    <div class="container">
+```
+<h2 class="section-title">Frequently Asked <span>Questions</span></h2>
 
-        <div class="section-title">
-            <h2>Frequently Asked Questions</h2>
-            <p>Some common questions about BlizTv.</p>
-        </div>
+<div class="faq">
 
-        <div class="faq">
+    <details class="faq-item">
+        <summary>Can I test BlizTv?</summary>
+        <p>
+            Yes. Contact us for a free 24-hour test.
+        </p>
+    </details>
 
-            <div class="faq-item">
-                <h3>Can I test BlizTv?</h3>
-                <p>
-                    Yes. Contact us to ask about a free 24-hour test.
-                </p>
-            </div>
+    <details class="faq-item">
+        <summary>Which devices are supported?</summary>
+        <p>
+            BlizTv can be used on many compatible Smart TVs,
+            Android devices, TV boxes, mobile devices and other supported players.
+        </p>
+    </details>
 
-            <div class="faq-item">
-                <h3>Which devices are supported?</h3>
-                <p>
-                    BlizTv can be used on supported Smart TVs,
-                    Android devices, TV boxes and other compatible devices.
-                </p>
-            </div>
+    <details class="faq-item">
+        <summary>How can I order?</summary>
+        <p>
+            Contact us through WhatsApp and we will provide you
+            with the available plans and instructions.
+        </p>
+    </details>
 
-            <div class="faq-item">
-                <h3>How can I contact you?</h3>
-                <p>
-                    Contact us through the available contact options
-                    and we will help you with setup and information.
-                </p>
-            </div>
-
-        </div>
-
-    </div>
+</div>
+```
 
 </section>
 
+<!-- CONTACT -->
 
 <section class="contact" id="contact">
 
-    <div class="contact-box">
+```
+<div class="contact-box">
 
-        <h2>Ready to get started?</h2>
+    <h2 class="section-title">Contact <span>BlizTv</span></h2>
 
-        <p>
-            Contact BlizTv for more information about plans,
-            testing and available options.
-        </p>
+    <p>
+        For tests, subscriptions, reseller information or any questions,
+        contact us directly on WhatsApp.
+    </p>
 
-        <div class="contact-buttons">
+    <a class="whatsapp" href="https://wa.me/420776282242" target="_blank">
+        WhatsApp: +420 776 282 242
+    </a>
 
-            <a href="https://t.me/" class="btn btn-primary">
-                TELEGRAM
-            </a>
-
-            <a href="https://wa.me/" class="btn btn-secondary">
-                WHATSAPP
-            </a>
-
-        </div>
-
+    <div class="website">
+        bliztv.online
     </div>
+
+</div>
+```
 
 </section>
 
-
 <footer>
-
-    <p>
-        © 2026 <strong>BlizTv</strong>.
-        All rights reserved.
-    </p>
-
+    © 2026 BlizTv. All rights reserved.
 </footer>
 
 </body>
