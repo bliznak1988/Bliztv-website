@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BLiZ TV Admin</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #020711;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    main {
+      width: min(420px, 88%);
+      padding: 28px;
+      border: 1px solid #16405a;
+      border-radius: 16px;
+      background: #06233a;
+    }
+    h1 { color: #65ff3e; }
+    input, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 13px;
+      margin: 8px 0;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    input { background: #fff; border: 1px solid #aaa; }
+    button {
+      border: 0;
+      background: #65ff3e;
+      color: #020711;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #result { overflow-wrap: anywhere; }
+    #panel { display: none; }
+    .hint { color: #c4d7e3; font-size: 13px; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>BLiZ TV Admin</h1>
+  <p>Administrator access only</p>
+
+  <section id="login">
+    <input id="email" type="email" placeholder="Administrator email" autocomplete="username">
+    <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+    <button id="loginBtn">Sign in</button>
+    <p class="hint">Use the administrator account configured in Supabase.</p>
+  </section>
+
+  <section id="panel">
+    <p>Signed in as administrator</p>
+    <button id="generateBtn">Generate Test Code</button>
+    <p id="result"></p>
+    <button id="logoutBtn">Sign out</button>
+  </section>
+
+  <p id="message" role="status"></p>
+</main>
+
+<script type="module">
+  import { createClient } from
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+  const SUPABASE_URL = "https://noyvamodeyshwnpssvpf.supabase.co";
+
+  // Replace this placeholder with the project's publishable/anon key.
+  const SUPABASE_ANON_KEY = sb_publishable_dyPJYKKpprqYXdjWnhl6wQ_bz9eVrwx;
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const $ = (id) => document.getElementById(id);
+  const ADMIN_USER_ID = "a1388d57-c60b-4ab1-bf8a-44f03cd6d47e";
+
+  function showMessage(text) {
+    $("message").textContent = text;
+  }
+
+  async function refreshSession() {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    const isAdmin = session?.user?.id === ADMIN_USER_ID;
+    $("login").style.display = isAdmin ? "none" : "block";
+    $("panel").style.display = isAdmin ? "block" : "none";
+
+    if (session && !isAdmin) {
+      await supabase.auth.signOut();
+      showMessage("This account is not authorized.");
+    }
+  }
+
+  $("loginBtn").addEventListener("click", async () => {
+    showMessage("Signing in...");
+    const { error } = await supabase.auth.signInWithPassword({
+      email: $("email").value.trim(),
+      password: $("password").value
+    });
+
+    if (error) {
+      showMessage("Sign-in failed. Check the account and password.");
+      return;
+    }
+
+    await refreshSession();
+    if ($("panel").style.display !== "none") showMessage("Signed in.");
+  });
+
+  $("generateBtn").addEventListener("click", async () => {
+    $("result").textContent = "";
+    showMessage("Generating code...");
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session || session.user.id !== ADMIN_USER_ID) {
+      showMessage("Please sign in with the administrator account.");
+      await refreshSession();
+      return;
+    }
+
+    const { data, error } = await supabase.functions.invoke(
+      "bliztv-generate-code",
+      { body: {} }
+    );
+
+    if (error || !data?.success || !data?.activation_code) {
+      showMessage(data?.error || error?.message || "Could not generate code.");
+      return;
+    }
+
+    $("result").textContent = "Test code: " + data.activation_code;
+    showMessage("Code generated successfully.");
+  });
+
+  $("logoutBtn").addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    $("result").textContent = "";
+    showMessage("Signed out.");
+    await refreshSession();
+  });
+
+  await refreshSession();
+</script>
+</body>
+</html>
