@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,8 +16,9 @@
       font-family: Arial, sans-serif;
     }
     main {
-      width: min(420px, 88%);
-      padding: 28px;
+      box-sizing: border-box;
+      width: min(420px, 92%);
+      padding: 26px;
       border: 1px solid #16405a;
       border-radius: 16px;
       background: #06233a;
@@ -31,7 +32,7 @@
       border-radius: 8px;
       font-size: 16px;
     }
-    input { background: #fff; border: 1px solid #aaa; }
+    input { background: white; border: 1px solid #aaa; }
     button {
       border: 0;
       background: #65ff3e;
@@ -40,23 +41,31 @@
       cursor: pointer;
     }
     #result { overflow-wrap: anywhere; }
-    #panel { display: none; }
+    .hidden { display: none; }
     .hint { color: #c4d7e3; font-size: 13px; }
   </style>
 </head>
 <body>
 <main>
   <h1>BLiZ TV Admin</h1>
-  <p>Administrator access only</p>
 
   <section id="login">
-    <input id="email" type="email" placeholder="Administrator email" autocomplete="username">
-    <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+    <input id="email" type="email"
+      placeholder="Administrator email" autocomplete="username">
+    <input id="password" type="password"
+      placeholder="Password" autocomplete="current-password">
     <button id="loginBtn">Sign in</button>
-    <p class="hint">Use the administrator account configured in Supabase.</p>
+    <button id="resetBtn">Forgot password?</button>
   </section>
 
-  <section id="panel">
+  <section id="recovery" class="hidden">
+    <p>Enter your new password.</p>
+    <input id="newPassword" type="password"
+      placeholder="New password" autocomplete="new-password">
+    <button id="savePasswordBtn">Save new password</button>
+  </section>
+
+  <section id="panel" class="hidden">
     <p>Signed in as administrator</p>
     <button id="generateBtn">Generate Test Code</button>
     <p id="result"></p>
@@ -70,56 +79,126 @@
   import { createClient } from
     "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-  const SUPABASE_URL = "https://noyvamodeyshwnpssvpf.supabase.co";
+  const SUPABASE_URL =
+    "https://noyvamodeyshwnpssvpf.supabase.co";
 
-  // Replace this placeholder with the project's publishable/anon key.
-  const SUPABASE_ANON_KEY = sb_publishable_dyPJYKKpprqYXdjWnhl6wQ_bz9eVrwx;
+  // Insert your existing Supabase publishable/anon key here.
+  const SUPABASE_ANON_KEY = "sb_publishable_dyPJYKKpprqYXdjWnhl6wQ_bz9eVrwx";
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  const $ = (id) => document.getElementById(id);
   const ADMIN_USER_ID = "a1388d57-c60b-4ab1-bf8a-44f03cd6d47e";
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const $ = id => document.getElementById(id);
 
-  function showMessage(text) {
+  function message(text) {
     $("message").textContent = text;
   }
 
+  function show(section) {
+    ["login", "recovery", "panel"].forEach(id => {
+      $(id).classList.toggle("hidden", id !== section);
+    });
+  }
+
   async function refreshSession() {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data, error } = await supabase.auth.getSession();
+    if (error) {
+      message("Could not check the session. Refresh the page.");
+      return;
+    }
 
-    const isAdmin = session?.user?.id === ADMIN_USER_ID;
-    $("login").style.display = isAdmin ? "none" : "block";
-    $("panel").style.display = isAdmin ? "block" : "none";
-
-    if (session && !isAdmin) {
-      await supabase.auth.signOut();
-      showMessage("This account is not authorized.");
+    const session = data.session;
+    if (session?.user?.id === ADMIN_USER_ID) {
+      show("panel");
+    } else {
+      show("login");
+      if (session) {
+        await supabase.auth.signOut();
+        message("This account is not authorized.");
+      }
     }
   }
 
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === "PASSWORD_RECOVERY") {
+      show("recovery");
+      message("Enter your new password.");
+    } else if (event === "SIGNED_OUT") {
+      show("login");
+    } else if (event === "SIGNED_IN" && session) {
+      setTimeout(() => refreshSession(), 0);
+    }
+  });
+
   $("loginBtn").addEventListener("click", async () => {
-    showMessage("Signing in...");
+    message("Signing in...");
+    const email = $("email").value.trim();
+    const password = $("password").value;
+
+    if (!email || !password) {
+      message("Enter your email and password.");
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
-      email: $("email").value.trim(),
-      password: $("password").value
+      email, password
     });
 
     if (error) {
-      showMessage("Sign-in failed. Check the account and password.");
+      message("Sign-in failed. Use Forgot password? to set your password.");
       return;
     }
 
     await refreshSession();
-    if ($("panel").style.display !== "none") showMessage("Signed in.");
+  });
+
+  $("resetBtn").addEventListener("click", async () => {
+    const email = $("email").value.trim();
+
+    if (!email) {
+      message("Enter your administrator email first.");
+      return;
+    }
+
+    message("Requesting password reset...");
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + "/admin.html"
+    });
+
+    if (error) {
+      message("Could not send reset email. Check Supabase URL settings.");
+    } else {
+      message("If the account exists, a reset link will arrive by email.");
+    }
+  });
+
+  $("savePasswordBtn").addEventListener("click", async () => {
+    const password = $("newPassword").value;
+
+    if (password.length < 8) {
+      message("Use a password with at least 8 characters.");
+      return;
+    }
+
+    message("Saving new password...");
+    const { error } = await supabase.auth.updateUser({ password });
+
+    if (error) {
+      message("Could not update password. Request a new reset link.");
+      return;
+    }
+
+    $("newPassword").value = "";
+    show("login");
+    message("Password saved. Now sign in with your new password.");
   });
 
   $("generateBtn").addEventListener("click", async () => {
     $("result").textContent = "";
-    showMessage("Generating code...");
+    message("Generating code...");
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session || session.user.id !== ADMIN_USER_ID) {
-      showMessage("Please sign in with the administrator account.");
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (sessionData.session?.user?.id !== ADMIN_USER_ID) {
+      message("Please sign in with the administrator account.");
       await refreshSession();
       return;
     }
@@ -130,22 +209,23 @@
     );
 
     if (error || !data?.success || !data?.activation_code) {
-      showMessage(data?.error || error?.message || "Could not generate code.");
+      message(data?.error || error?.message || "Could not generate code.");
       return;
     }
 
     $("result").textContent = "Test code: " + data.activation_code;
-    showMessage("Code generated successfully.");
+    message("Code generated successfully.");
   });
 
   $("logoutBtn").addEventListener("click", async () => {
     await supabase.auth.signOut();
     $("result").textContent = "";
-    showMessage("Signed out.");
-    await refreshSession();
+    message("Signed out.");
+    show("login");
   });
 
   await refreshSession();
 </script>
 </body>
 </html>
+```
