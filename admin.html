@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,6 +39,7 @@
       font-weight: bold;
       cursor: pointer;
     }
+    button:disabled { opacity: .65; cursor: wait; }
     #result { overflow-wrap: anywhere; }
     .hidden { display: none; }
     .hint { color: #c4d7e3; font-size: 13px; }
@@ -54,25 +54,25 @@
       placeholder="Administrator email" autocomplete="username">
     <input id="password" type="password"
       placeholder="Password" autocomplete="current-password">
-    <button id="loginBtn">Sign in</button>
-    <button id="resetBtn">Forgot password?</button>
+    <button id="loginBtn" type="button">Sign in</button>
+    <button id="resetBtn" type="button">Forgot password?</button>
   </section>
 
   <section id="recovery" class="hidden">
     <p>Enter your new password.</p>
     <input id="newPassword" type="password"
       placeholder="New password" autocomplete="new-password">
-    <button id="savePasswordBtn">Save new password</button>
+    <button id="savePasswordBtn" type="button">Save new password</button>
   </section>
 
   <section id="panel" class="hidden">
     <p>Signed in as administrator</p>
-    <button id="generateBtn">Generate Test Code</button>
-    <p id="result"></p>
-    <button id="logoutBtn">Sign out</button>
+    <button id="generateBtn" type="button">Generate Test Code</button>
+    <p id="result" aria-live="polite"></p>
+    <button id="logoutBtn" type="button">Sign out</button>
   </section>
 
-  <p id="message" role="status"></p>
+  <p id="message" role="status" aria-live="polite"></p>
 </main>
 
 <script type="module">
@@ -81,10 +81,7 @@
 
   const SUPABASE_URL =
     "https://noyvamodeyshwnpssvpf.supabase.co";
-
-  // Insert your existing Supabase publishable/anon key here.
   const SUPABASE_ANON_KEY = "sb_publishable_dyPJYKKpprqYXdjWnhl6wQ_bz9eVrwx";
-
   const ADMIN_USER_ID = "a1388d57-c60b-4ab1-bf8a-44f03cd6d47e";
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   const $ = id => document.getElementById(id);
@@ -133,37 +130,28 @@
     message("Signing in...");
     const email = $("email").value.trim();
     const password = $("password").value;
-
     if (!email || !password) {
       message("Enter your email and password.");
       return;
     }
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email, password
-    });
-
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       message("Sign-in failed. Use Forgot password? to set your password.");
       return;
     }
-
     await refreshSession();
   });
 
   $("resetBtn").addEventListener("click", async () => {
     const email = $("email").value.trim();
-
     if (!email) {
       message("Enter your administrator email first.");
       return;
     }
-
     message("Requesting password reset...");
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + "/admin.html"
     });
-
     if (error) {
       message("Could not send reset email. Check Supabase URL settings.");
     } else {
@@ -173,20 +161,16 @@
 
   $("savePasswordBtn").addEventListener("click", async () => {
     const password = $("newPassword").value;
-
     if (password.length < 8) {
       message("Use a password with at least 8 characters.");
       return;
     }
-
     message("Saving new password...");
     const { error } = await supabase.auth.updateUser({ password });
-
     if (error) {
       message("Could not update password. Request a new reset link.");
       return;
     }
-
     $("newPassword").value = "";
     show("login");
     message("Password saved. Now sign in with your new password.");
@@ -195,26 +179,28 @@
   $("generateBtn").addEventListener("click", async () => {
     $("result").textContent = "";
     message("Generating code...");
-
-    const { data: sessionData } = await supabase.auth.getSession();
-    if (sessionData.session?.user?.id !== ADMIN_USER_ID) {
-      message("Please sign in with the administrator account.");
-      await refreshSession();
-      return;
+    $("generateBtn").disabled = true;
+    try {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || sessionData.session?.user?.id !== ADMIN_USER_ID) {
+        message("Please sign in with the administrator account.");
+        await refreshSession();
+        return;
+      }
+      const { data, error } = await supabase.functions.invoke(
+        "bliztv-generate-code", { body: {} }
+      );
+      if (error || !data?.success || !data?.activation_code) {
+        message(data?.error || error?.message || "Could not generate code.");
+        return;
+      }
+      $("result").textContent = "Test code: " + data.activation_code;
+      message("Code generated successfully.");
+    } catch (error) {
+      message("Could not generate code. Check your connection and try again.");
+    } finally {
+      $("generateBtn").disabled = false;
     }
-
-    const { data, error } = await supabase.functions.invoke(
-      "bliztv-generate-code",
-      { body: {} }
-    );
-
-    if (error || !data?.success || !data?.activation_code) {
-      message(data?.error || error?.message || "Could not generate code.");
-      return;
-    }
-
-    $("result").textContent = "Test code: " + data.activation_code;
-    message("Code generated successfully.");
   });
 
   $("logoutBtn").addEventListener("click", async () => {
@@ -228,4 +214,3 @@
 </script>
 </body>
 </html>
-```
