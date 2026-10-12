@@ -211,8 +211,13 @@
         return;
       }
       const { data, error } = await supabase.functions.invoke(
-        "bliztv-generate-code", { body: {} }
-      );
+  "bliztv-generate-trial",
+  {
+    body: {
+      note: $("trialNote").value.trim()
+    }
+  }
+);
       if (error || !data?.success || !data?.activation_code) {
         message(data?.error || error?.message || "Could not generate code.");
         return;
