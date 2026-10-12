@@ -67,8 +67,22 @@
 
   <section id="panel" class="hidden">
     <p>Signed in as administrator</p>
-    <button id="generateBtn" type="button">Generate Test Code</button>
-    <p id="result" aria-live="polite"></p>
+    
+<button id="generateBtn" type="button">Generate Test Code</button>
+<p id="result" aria-live="polite"></p>
+
+<hr style="border-color:#16405a; margin:22px 0;">
+
+<h2 style="color:#65ff3e;">IPTV Trial</h2>
+<button id="trialBtn" type="button">Generate IPTV Trial</button>
+<div id="trialResult" class="hidden">
+  <p><strong>Username:</strong> <span id="trialUsername"></span></p>
+  <p><strong>Password:</strong> <span id="trialPassword"></span></p>
+  <p><strong>M3U URL:</strong></p>
+  <input id="trialM3u" type="text" readonly>
+  <button id="copyTrialBtn" type="button">Copy Trial Details</button>
+</div>
+
     <button id="logoutBtn" type="button">Sign out</button>
   </section>
 
