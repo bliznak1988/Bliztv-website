@@ -224,6 +224,66 @@
     show("login");
   });
 
+  $("trialBtn").addEventListener("click", async () => {
+    const btn = $("trialBtn");
+    const result = $("trialResult");
+
+    btn.disabled = true;
+    result.classList.add("hidden");
+    message("Creating IPTV trial...");
+
+    try {
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession();
+
+      if (
+        sessionError ||
+        sessionData.session?.user?.id !== ADMIN_USER_ID
+      ) {
+        message("Please sign in with the administrator account.");
+        await refreshSession();
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke(
+        "bliztv-generate-trial",
+        { body: {} }
+      );
+
+      if (error || !data?.success || !data?.m3u_url) {
+        message(data?.error || error?.message || "Could not create trial.");
+        return;
+      }
+
+      $("trialUsername").textContent = data.username || "Not provided";
+      $("trialPassword").textContent = data.password || "Not provided";
+      $("trialM3u").value = data.m3u_url;
+
+      result.classList.remove("hidden");
+      message("IPTV trial created successfully.");
+    } catch {
+      message("Could not create trial. Check your connection.");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  $("copyTrialBtn").addEventListener("click", async () => {
+    const details =
+      "BLiZ TV — IPTV Trial\n" +
+      "Username: " + $("trialUsername").textContent + "\n" +
+      "Password: " + $("trialPassword").textContent + "\n" +
+      "M3U URL: " + $("trialM3u").value;
+
+    try {
+      await navigator.clipboard.writeText(details);
+      message("Trial details copied. You can send them to your client.");
+    } catch {
+      $("trialM3u").select();
+      message("Select and copy the M3U link manually.");
+    }
+  });
+
   await refreshSession();
 </script>
 </body>
