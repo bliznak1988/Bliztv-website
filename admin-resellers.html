@@ -337,6 +337,63 @@ $("refreshButton").addEventListener("click", async () => {
 });
 
 $("addButton").addEventListener("click", () => adjustCredits(1));
+  
+async function loadCreditHistory() {
+  const result = await apiRequest("list_credit_history");
+
+  const resellerNames = {};
+
+  for (const option of $("resellerSelect").options) {
+    resellerNames[option.value] =
+      option.textContent.split(" — ")[0];
+  }
+
+  $("historyRows").replaceChildren();
+
+  for (const entry of result.history || []) {
+    const tr = document.createElement("tr");
+
+    const values = [
+      new Date(entry.created_at).toLocaleString(),
+      resellerNames[entry.reseller_id] || "Unknown reseller",
+      entry.amount > 0 ? "+" + entry.amount : String(entry.amount),
+      entry.reason || "—",
+      entry.activation_code || "—"
+    ];
+
+    for (const value of values) {
+      const td = document.createElement("td");
+      td.textContent = value;
+      tr.appendChild(td);
+    }
+
+    $("historyRows").appendChild(tr);
+  }
+}
+
+$("historyButton").addEventListener("click", async () => {
+  if (busy) return;
+
+  setBusy(true);
+
+  try {
+    await loadCreditHistory();
+    message("Credit history updated.");
+  } catch (error) {
+    message(error.message);
+  } finally {
+    setBusy(false);
+  }
+});
+
+const originalShowDashboard = showDashboard;
+
+showDashboard = function() {
+  originalShowDashboard();
+  $("historySection").classList.remove("hidden");
+  loadCreditHistory().catch(error => message(error.message));
+};
+
 $("removeButton").addEventListener("click", () => adjustCredits(-1));
 
 $("logoutButton").addEventListener("click", async () => {
