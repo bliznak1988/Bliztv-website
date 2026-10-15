@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>BLiZ TV | Reseller Test</title>
 <style>
-:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(90deg,rgba(1,6,18,.48),rgba(1,8,20,.25),rgba(1,6,18,.48)),url("bliztv-reseller-bg.png") center center / cover no-repeat fixed #030710;color:#eef6ff;font-family:system-ui,Arial,sans-serif;display:grid;place-items:center;padding:22px}.panel{width:min(440px,100%);background:rgba(3,12,29,.86);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(57,198,255,.6);border-radius:22px;padding:30px;box-shadow:0 20px 75px #000c,0 0 28px #00bfff38}.brand{text-align:center;font-size:30px;font-weight:900;letter-spacing:2px}.brand span{color:#6cff57;text-shadow:0 0 15px #32ff5a88}.sub{text-align:center;color:#9ab0c4;font-size:14px;margin:8px 0 26px}label{display:block;font-size:13px;color:#b8c9da;margin:15px 0 7px}input{width:100%;padding:13px 14px;background:#081426;border:1px solid #35536d;border-radius:10px;color:#fff;font-size:15px}button{width:100%;margin-top:22px;padding:13px;border:0;border-radius:11px;background:linear-gradient(100deg,#17d6ed,#63f44a);color:#071608;box-shadow:0 0 20px #24edb455;font-weight:800;font-size:15px;cursor:pointer}button:disabled{opacity:.6;cursor:wait}.secondary{background:#17344c;color:#d7e7f5;margin-top:14px}.error{color:#ffb3b3}.success{color:#95ef9b}.notice{margin-top:17px;font-size:13px;min-height:18px;overflow-wrap:anywhere}.hide{display:none}.balance{font-size:52px;color:#7eff65;font-weight:850;margin:6px 0}.small{color:#a9bfd0;font-size:13px}.name{font-size:19px;font-weight:700}.chip{display:inline-block;background:#1a3e34;color:#a8f8a5;padding:6px 10px;border-radius:20px;font-size:12px;margin-top:10px}
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(90deg,rgba(1,6,18,.48),rgba(1,8,20,.25),rgba(1,6,18,.48)),url("bliztv-reseller-bg.png") center center / cover no-repeat fixed #030710;color:#eef6ff;font-family:system-ui,Arial,sans-serif;display:grid;place-items:center;padding:22px}.panel{width:min(440px,100%);background:rgba(3,12,29,.86);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(57,198,255,.6);border-radius:22px;padding:30px;box-shadow:0 20px 75px #000c,0 0 28px #00bfff38}.brand{text-align:center;font-size:30px;font-weight:900;letter-spacing:2px}.brand span{color:#6cff57;text-shadow:0 0 15px #32ff5a88}.sub{text-align:center;color:#9ab0c4;font-size:14px;margin:8px 0 26px}label{display:block;font-size:13px;color:#b8c9da;margin:15px 0 7px}input{width:100%;padding:13px 14px;background:#081426;border:1px solid #35536d;border-radius:10px;color:#fff;font-size:15px}button{width:100%;margin-top:22px;padding:13px;border:0;border-radius:11px;background:linear-gradient(100deg,#17d6ed,#63f44a);color:#071608;box-shadow:0 0 20px #24edb455;font-weight:800;font-size:15px;cursor:pointer}button:disabled{opacity:.6;cursor:wait}.secondary{background:#17344c;color:#d7e7f5;margin-top:14px}.error{color:#ffb3b3}.success{color:#95ef9b}.notice{margin-top:17px;font-size:13px;min-height:18px;overflow-wrap:anywhere}.hide{display:none}.balance{font-size:52px;color:#7eff65;font-weight:850;margin:6px 0}.small{color:#a9bfd0;font-size:13px}.name{font-size:19px;font-weight:700}.generated-code{margin-top:12px;padding:14px;background:#081426;border:1px solid #4b9e85;border-radius:10px;overflow-wrap:anywhere;font-family:monospace;font-size:15px;color:#9dffa1}.chip{display:inline-block;background:#1a3e34;color:#a8f8a5;padding:6px 10px;border-radius:20px;font-size:12px;margin-top:10px}
 @media(max-width:650px){body{background-attachment:scroll;background-position:center center;padding:14px}.panel{padding:24px 20px;background:rgba(3,12,29,.92)}}
 </style>
 </head>
@@ -46,6 +46,12 @@
     <p class="small">Достапни кредити</p>
     <div class="balance" id="credits">—</div>
     <p class="small">1 кредит = 1 доживотен активациски код</p>
+    <button id="generateButton" type="button">Generate Activation Code · −1 Credit</button>
+    <div id="generatedArea" class="hide">
+      <p class="small">Нов активациски код</p>
+      <div id="generatedCode" class="generated-code"></div>
+      <button id="copyButton" class="secondary" type="button">Copy Code</button>
+    </div>
     <button id="refreshButton" class="secondary" type="button">Освежи кредити</button>
     <button id="logoutButton" class="secondary" type="button">Logout</button>
   </section>
@@ -59,14 +65,21 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {auth:{per
 const $ = id => document.getElementById(id);
 let accessToken = null;
 function status(message, isError=false){$('status').textContent=message;$('status').className='notice '+(isError?'error':'success')}
-function busy(on){$('loginButton').disabled=on;$('refreshButton').disabled=on}
+function busy(on){$('loginButton').disabled=on;$('refreshButton').disabled=on;$('generateButton').disabled=on}
 function showSection(id){for(const name of ['loginSection','forgotSection','resetSection','dashboard'])$(name).classList.toggle('hide',name!==id)}
-function showLogin(){accessToken=null;showSection('loginSection');$('password').value=''}
-async function loadDashboard(){
-  if(!accessToken){showLogin();return}
-  const response=await fetch(`${SUPABASE_URL}/functions/v1/bliztv-reseller-api`,{method:'POST',headers:{'Authorization':`Bearer ${accessToken}`,'apikey':SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json'},body:JSON.stringify({})});
+function showLogin(){accessToken=null;showSection('loginSection');$('password').value='';$('generatedArea').classList.add('hide');$('generatedCode').textContent=''}
+async function apiRequest(action){
+  const {data:{session},error}=await supabase.auth.getSession();
+  if(error||!session)throw new Error('Сесијата е истечена. Најави се повторно.');
+  accessToken=session.access_token;
+  const response=await fetch(`${SUPABASE_URL}/functions/v1/bliztv-reseller-api`,{method:'POST',headers:{'Authorization':`Bearer ${accessToken}`,'apikey':SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json'},body:JSON.stringify(action?{action}:{})});
   const data=await response.json().catch(()=>({}));
   if(!response.ok||!data.success)throw new Error(data.error||`API грешка (${response.status})`);
+  return data;
+}
+async function loadDashboard(){
+  if(!accessToken){showLogin();return}
+  const data=await apiRequest();
   $('resellerName').textContent=data.reseller_name||'Reseller';
   $('credits').textContent=String(data.credits??0);
   showSection('dashboard');status('Успешно поврзување со BLiZ TV Reseller API.');
@@ -119,6 +132,23 @@ if(recoveryLink){
     }catch(err){status(err.message||'Неуспешна проверка на линкот',true)}
   })();
 }
+$('generateButton').addEventListener('click',async()=>{
+  if(!confirm('Да генерирам нов активациски код и да потрошам 1 кредит?'))return;
+  busy(true);status('Се генерира код...');
+  try{
+    const data=await apiRequest('generate_code');
+    if(typeof data.activation_code!=='string'||!data.activation_code)throw new Error('Нема код во одговорот. Провери ја историјата пред повторен обид.');
+    $('generatedCode').textContent=data.activation_code;
+    $('generatedArea').classList.remove('hide');
+    if(data.credits!==null&&data.credits!==undefined)$('credits').textContent=String(data.credits);
+    status('Кодот е генериран. Зачувај го или копирај го.');
+  }catch(err){status((err.message||'Грешка')+' Ако барањето било испратено, провери го балансот пред повторен обид.',true)}
+  finally{busy(false)}
+});
+$('copyButton').addEventListener('click',async()=>{
+  const code=$('generatedCode').textContent;
+  try{await navigator.clipboard.writeText(code);status('Кодот е копиран.')}catch{status('Не може автоматски да се копира. Селектирај го кодот рачно.',true)}
+});
 $('refreshButton').addEventListener('click',async()=>{busy(true);try{await loadDashboard()}catch(err){status(err.message||'Грешка',true)}finally{busy(false)}});
 $('logoutButton').addEventListener('click',async()=>{await supabase.auth.signOut();showLogin();status('Одјавен си.')});
 </script>
