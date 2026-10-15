@@ -382,6 +382,40 @@ $("refreshButton").addEventListener("click", async () => {
     setBusy(false);
   }
 });
+  $("createResellerButton").addEventListener("click", async () => {
+  const resellerName = $("newResellerName").value.trim();
+  const email = $("newResellerEmail").value.trim();
+
+  if (!resellerName || !email) {
+    message("Enter reseller name and email.");
+    return;
+  }
+
+  if (!confirm(`Create reseller and send invitation to ${email}?`)) {
+    return;
+  }
+
+  const button = $("createResellerButton");
+  button.disabled = true;
+
+  try {
+    const result = await apiRequest("create_reseller", {
+      reseller_name: resellerName,
+      email: email
+    });
+
+    $("newResellerName").value = "";
+    $("newResellerEmail").value = "";
+
+    await loadResellers();
+
+    message("Reseller created! Invitation sent to " + email);
+  } catch (error) {
+    message(error.message || "Could not create reseller.");
+  } finally {
+    button.disabled = false;
+  }
+});
 
 $("addButton").addEventListener("click", () => adjustCredits(1));
   
