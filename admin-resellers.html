@@ -126,6 +126,27 @@ small { color: #a5b9cd; }
       <p><small>Every change is recorded in Supabase credit history.</small></p>
     </div>
   </section>
+  
+<section id="historySection" class="card hidden">
+  <h2>Credit History</h2>
+  <button id="historyButton">Refresh History</button>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Reseller</th>
+          <th>Amount</th>
+          <th>Reason</th>
+          <th>Activation Code</th>
+        </tr>
+      </thead>
+      <tbody id="historyRows"></tbody>
+    </table>
+  </div>
+</section>
+
   <p id="message" role="status"></p>
 
   </main>
