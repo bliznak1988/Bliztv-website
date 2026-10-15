@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLiZ TV | Super Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #061321;
+  color: white;
+}
+header {
+  padding: 22px;
+  background: #0b2237;
+  border-bottom: 1px solid #23445c;
+}
+h1 { margin: 0; color: #70ff52; }
+main { max-width: 1050px; margin: auto; padding: 24px; }
+.card {
+  background: #10283e;
+  border: 1px solid #254761;
+  padding: 22px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+}
+input, button {
+  padding: 13px;
+  border-radius: 8px;
+  border: 0;
+  font-size: 15px;
+}
+input { width: 100%; margin: 8px 0; }
+button {
+  background: #65ed4b;
+  color: #062010;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 5px 5px 5px 0;
+}
+button:disabled { opacity: .5; cursor: wait; }
+.secondary { background: #29465d; color: white; }
+.hidden { display: none; }
+#message { margin: 12px 0; color: #ffb3b3; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td {
+  padding: 14px;
+  border-bottom: 1px solid #29465d;
+  text-align: left;
+}
+th { color: #8fdcff; }
+.active { color: #76ff70; }
+.inactive { color: #ff8888; }
+.stats { font-size: 25px; font-weight: bold; color: #70ff52; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>BLiZ TV</h1>
+  <small>SUPER ADMIN DASHBOARD</small>
+</header>
+
+<main>
+  <section id="loginBox" class="card">
+    <h2>Admin Login</h2>
+    <input id="email" type="email" placeholder="Admin email">
+    <input id="password" type="password" placeholder="Password">
+    <button id="loginButton">Login</button>
+  </section>
+
+  <section id="dashboard" class="hidden">
+    <div class="card">
+      <h2>Reseller Management</h2>
+      <p>Total Resellers</p>
+      <div id="totalResellers" class="stats">0</div>
+      <button id="refreshButton">Refresh</button>
+      <button id="logoutButton" class="secondary">Logout</button>
+    </div>
+
+    <div class="card table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Reseller</th>
+            <th>Credits</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody id="resellerRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p id="message" role="status"></p>
+</main>
+
+<script>
+const SUPABASE_URL =
+  "https://noyvamodeyshwnpssvpf.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_dyPJYKKpprqYXdjWnhl6wQ_bz9eVrwx";
+
+const ADMIN_ID =
+  "a1388d57-c60b-4ab1-bf8a-44f03cd6d47e";
+
+const client = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const $ = id => document.getElementById(id);
+const message = text => { $("message").textContent = text; };
+
+function showLogin() {
+  $("loginBox").classList.remove("hidden");
+  $("dashboard").classList.add("hidden");
+}
+
+function showDashboard() {
+  $("loginBox").classList.add("hidden");
+  $("dashboard").classList.remove("hidden");
+}
+
+async function loadResellers() {
+  message("");
+
+  const { data: sessionData } = await client.auth.getSession();
+  const token = sessionData.session?.access_token;
+
+  if (!token) {
+    showLogin();
+    message("Please login.");
+    return;
+  }
+
+  const response = await fetch(
+    SUPABASE_URL + "/functions/v1/bliztv-super-admin",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({ action: "list_resellers" })
+    }
+  );
+
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.error || "Could not load resellers");
+  }
+
+  const resellers = result.resellers || [];
+  $("totalResellers").textContent = resellers.length;
+  $("resellerRows").replaceChildren();
+
+  for (const reseller of resellers) {
+    const tr = document.createElement("tr");
+    const values = [
+      reseller.reseller_name || "Unnamed",
+      String(reseller.credits),
+      reseller.is_active ? "Active" : "Inactive",
+      new Date(reseller.created_at).toLocaleDateString()
+    ];
+
+    values.forEach((value, index) => {
+      const td = document.createElement("td");
+      td.textContent = value;
+      if (index === 2) {
+        td.className = reseller.is_active ? "active" : "inactive";
+      }
+      tr.appendChild(td);
+    });
+
+    $("resellerRows").appendChild(tr);
+  }
+}
+
+async function login() {
+  const button = $("loginButton");
+  button.disabled = true;
+  message("");
+
+  try {
+    const { data, error } = await client.auth.signInWithPassword({
+      email: $("email").value.trim(),
+      password: $("password").value
+    });
+
+    if (error) throw error;
+
+    if (data.user?.id !== ADMIN_ID) {
+      await client.auth.signOut();
+      throw new Error("Access denied: not an administrator");
+    }
+
+    await loadResellers();
+    showDashboard();
+  } catch (error) {
+    showLogin();
+    message(error.message);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+$("loginButton").addEventListener("click", login);
+
+$("refreshButton").addEventListener("click", async () => {
+  try {
+    await loadResellers();
+  } catch (error) {
+    message(error.message);
+  }
+});
+
+$("logoutButton").addEventListener("click", async () => {
+  await client.auth.signOut();
+  showLogin();
+  message("Logged out.");
+});
+
+(async () => {
+  const { data: { user } } = await client.auth.getUser();
+
+  if (user?.id !== ADMIN_ID) {
+    showLogin();
+    return;
+  }
+
+  try {
+    await loadResellers();
+    showDashboard();
+  } catch (error) {
+    showLogin();
+    message(error.message);
+  }
+})();
+</script>
+</body>
+</html>
