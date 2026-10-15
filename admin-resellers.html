@@ -126,6 +126,33 @@ small { color: #a5b9cd; }
       <p><small>Every change is recorded in Supabase credit history.</small></p>
     </div>
   </section>
+  <section id="createResellerSection" class="card hidden">
+  <h2>➕ Create New Reseller</h2>
+
+  <label for="newResellerName">Reseller Name</label>
+  <input
+    id="newResellerName"
+    type="text"
+    placeholder="Enter reseller name"
+    maxlength="100"
+  >
+
+  <label for="newResellerEmail">Email Address</label>
+  <input
+    id="newResellerEmail"
+    type="email"
+    placeholder="reseller@example.com"
+  >
+
+  <button id="createResellerButton" type="button">
+    Create Reseller &amp; Send Invitation
+  </button>
+
+  <p><small>
+    The reseller will receive an email invitation
+    to set their password. Starting balance: 0 credits.
+  </small></p>
+</section>
   
 <section id="historySection" class="card hidden">
   <h2>Credit History</h2>
