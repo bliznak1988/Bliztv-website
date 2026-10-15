@@ -386,13 +386,21 @@ $("historyButton").addEventListener("click", async () => {
   }
 });
 
+
 const originalShowDashboard = showDashboard;
+const originalShowLogin = showLogin;
 
 showDashboard = function() {
   originalShowDashboard();
   $("historySection").classList.remove("hidden");
   loadCreditHistory().catch(error => message(error.message));
 };
+
+showLogin = function() {
+  originalShowLogin();
+  $("historySection").classList.add("hidden");
+};
+
 
 $("removeButton").addEventListener("click", () => adjustCredits(-1));
 
