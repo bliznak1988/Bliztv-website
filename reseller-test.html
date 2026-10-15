@@ -21,6 +21,24 @@
       <input id="password" type="password" autocomplete="current-password" required placeholder="Внеси лозинка" />
       <button id="loginButton" type="submit">Login</button>
     </form>
+    <button id="forgotButton" class="secondary" type="button">Forgot password?</button>
+  </section>
+  <section id="forgotSection" class="hide">
+    <form id="forgotForm">
+      <label for="recoveryEmail">Email за ресетирање</label>
+      <input id="recoveryEmail" type="email" required autocomplete="email" placeholder="reseller@example.com" />
+      <button id="sendRecoveryButton" type="submit">Испрати линк</button>
+    </form>
+    <button id="backButton" class="secondary" type="button">Назад на Login</button>
+  </section>
+  <section id="resetSection" class="hide">
+    <form id="resetForm">
+      <label for="newPassword">Нова лозинка (најмалку 8 знаци)</label>
+      <input id="newPassword" type="password" required minlength="8" autocomplete="new-password" />
+      <label for="confirmPassword">Повтори ја новата лозинка</label>
+      <input id="confirmPassword" type="password" required minlength="8" autocomplete="new-password" />
+      <button id="savePasswordButton" type="submit">Зачувај нова лозинка</button>
+    </form>
   </section>
   <section id="dashboard" class="hide">
     <div class="name" id="resellerName"></div>
@@ -35,14 +53,15 @@
 </main>
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-const SUPABASE_URL = "https://noyvamodeyshwnpssvpf.supabase.co";
+const SUPABASE_URL = 'https://noyvamodeyshwnpssvpf.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_dyPJYKKpprqYXdjWnhl6wQ_bz9eVrwx';
-const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const $ = id => document.getElementById(id);
 let accessToken = null;
 function status(message, isError=false){$('status').textContent=message;$('status').className='notice '+(isError?'error':'success')}
 function busy(on){$('loginButton').disabled=on;$('refreshButton').disabled=on}
-function showLogin(){accessToken=null;$('dashboard').classList.add('hide');$('loginSection').classList.remove('hide');$('password').value=''}
+function showSection(id){for(const name of ['loginSection','forgotSection','resetSection','dashboard'])$(name).classList.toggle('hide',name!==id)}
+function showLogin(){accessToken=null;showSection('loginSection');$('password').value=''}
 async function loadDashboard(){
   if(!accessToken){showLogin();return}
   const response=await fetch(`${SUPABASE_URL}/functions/v1/bliztv-reseller-api`,{method:'POST',headers:{'Authorization':`Bearer ${accessToken}`,'apikey':SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json'},body:JSON.stringify({})});
@@ -50,7 +69,7 @@ async function loadDashboard(){
   if(!response.ok||!data.success)throw new Error(data.error||`API грешка (${response.status})`);
   $('resellerName').textContent=data.reseller_name||'Reseller';
   $('credits').textContent=String(data.credits??0);
-  $('loginSection').classList.add('hide');$('dashboard').classList.remove('hide');status('Успешно поврзување со BLiZ TV Reseller API.');
+  showSection('dashboard');status('Успешно поврзување со BLiZ TV Reseller API.');
 }
 $('loginForm').addEventListener('submit',async event=>{
   event.preventDefault();busy(true);status('Се проверува најавата...');
@@ -61,6 +80,45 @@ $('loginForm').addEventListener('submit',async event=>{
     await loadDashboard();
   }catch(err){await supabase.auth.signOut();showLogin();status(err.message||'Грешка при најава',true)}finally{busy(false)}
 });
+$('forgotButton').addEventListener('click',()=>{$('recoveryEmail').value=$('email').value;showSection('forgotSection');status('Внеси email за ресетирање.')});
+$('backButton').addEventListener('click',()=>{showLogin();status('')});
+$('forgotForm').addEventListener('submit',async event=>{
+  event.preventDefault();$('sendRecoveryButton').disabled=true;status('Се испраќа линк...');
+  try{
+    const {error}=await supabase.auth.resetPasswordForEmail($('recoveryEmail').value.trim(),{redirectTo:location.origin+location.pathname});
+    if(error)throw error;
+    status('Ако постои корисник со овој email, ќе добие линк. Провери Inbox и Spam.');
+  }catch(err){status(err.message||'Грешка при испраќање',true)}finally{$('sendRecoveryButton').disabled=false}
+});
+$('resetForm').addEventListener('submit',async event=>{
+  event.preventDefault();
+  if($('newPassword').value!==$('confirmPassword').value){status('Лозинките не се исти.',true);return}
+  $('savePasswordButton').disabled=true;status('Се зачувува лозинката...');
+  try{
+    const {data:{session},error:sessionError}=await supabase.auth.getSession();
+    if(sessionError||!session)throw new Error('Линкот е невалиден или истечен. Побарај нов линк.');
+    const {error}=await supabase.auth.updateUser({password:$('newPassword').value});
+    if(error)throw error;
+    await supabase.auth.signOut();history.replaceState(null,'',location.pathname);showLogin();
+    status('Лозинката е сменета. Најави се со новата лозинка.');
+  }catch(err){status(err.message||'Грешка при промена',true)}finally{$('savePasswordButton').disabled=false}
+});
+const recoveryLink=location.hash.includes('type=recovery')||new URLSearchParams(location.search).get('type')==='recovery'||new URLSearchParams(location.search).has('token_hash');
+if(recoveryLink){
+  showSection('resetSection');status('Се проверува линкот за ресетирање...');
+  (async()=>{
+    try{
+      const params=new URLSearchParams(location.search);
+      if(params.has('token_hash')){
+        const {error}=await supabase.auth.verifyOtp({token_hash:params.get('token_hash'),type:'recovery'});
+        if(error)throw error;
+      }
+      const {data:{session},error}=await supabase.auth.getSession();
+      if(error||!session)throw new Error('Линкот е невалиден или истечен. Побарај нов линк.');
+      status('Внеси ја новата лозинка.');
+    }catch(err){status(err.message||'Неуспешна проверка на линкот',true)}
+  })();
+}
 $('refreshButton').addEventListener('click',async()=>{busy(true);try{await loadDashboard()}catch(err){status(err.message||'Грешка',true)}finally{busy(false)}});
 $('logoutButton').addEventListener('click',async()=>{await supabase.auth.signOut();showLogin();status('Одјавен си.')});
 </script>
