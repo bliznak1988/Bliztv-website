@@ -155,6 +155,68 @@ $('generateButton').addEventListener('click',async()=>{
   }catch(err){status((err.message||'Грешка')+' Ако барањето било испратено, провери го балансот пред повторен обид.',true)}
   finally{busy(false)}
 });
+  
+$('historyButton').addEventListener('click', async () => {
+  const button = $('historyButton');
+  const area = $('historyArea');
+  const list = $('historyList');
+
+  if (!area.classList.contains('hide')) {
+    area.classList.add('hide');
+    return;
+  }
+
+  button.disabled = true;
+  list.textContent = 'Се вчитуваат кодовите...';
+  area.classList.remove('hide');
+
+  try {
+    const data = await apiRequest('list_codes');
+    list.replaceChildren();
+
+    if (!Array.isArray(data.codes)) {
+      throw new Error('Невалиден одговор од серверот.');
+    }
+
+    if (data.codes.length === 0) {
+      list.textContent = 'Сè уште немаш генерирани кодови.';
+      return;
+    }
+
+    for (const code of data.codes) {
+      const item = document.createElement('div');
+      item.style.cssText =
+        'padding:12px;margin:10px 0;border:1px solid #31516a;border-radius:10px;overflow-wrap:anywhere;';
+
+      const codeText = document.createElement('strong');
+      codeText.textContent = code.activation_code;
+
+      const details = document.createElement('p');
+      details.className = 'small';
+
+      const created = code.created_at
+        ? new Date(code.created_at).toLocaleString('mk-MK')
+        : '—';
+
+      const activated = code.activated_at
+        ? new Date(code.activated_at).toLocaleString('mk-MK')
+        : '—';
+
+      details.textContent =
+        'Создаден: ' + created +
+        ' | Статус: ' + (code.is_used ? 'Активиран' : 'Неактивиран') +
+        ' | Активиран на: ' + activated;
+
+      item.append(codeText, details);
+      list.appendChild(item);
+    }
+  } catch (err) {
+    list.textContent = 'Грешка: ' + (err.message || 'Не може да се вчита историјата.');
+  } finally {
+    button.disabled = false;
+  }
+});
+
 $('copyButton').addEventListener('click',async()=>{
   const code=$('generatedCode').textContent;
   try{await navigator.clipboard.writeText(code);status('Кодот е копиран.')}catch{status('Не може автоматски да се копира. Селектирај го кодот рачно.',true)}
