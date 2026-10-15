@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BLiZ TV | Reseller Test</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(90deg,rgba(1,6,18,.48),rgba(1,8,20,.25),rgba(1,6,18,.48)),url("bliztv-reseller-bg.png") center center / cover no-repeat fixed #030710;color:#eef6ff;font-family:system-ui,Arial,sans-serif;display:grid;place-items:center;padding:22px}.panel{width:min(440px,100%);background:rgba(3,12,29,.86);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(57,198,255,.6);border-radius:22px;padding:30px;box-shadow:0 20px 75px #000c,0 0 28px #00bfff38}.brand{text-align:center;font-size:30px;font-weight:900;letter-spacing:2px}.brand span{color:#6cff57;text-shadow:0 0 15px #32ff5a88}.sub{text-align:center;color:#9ab0c4;font-size:14px;margin:8px 0 26px}label{display:block;font-size:13px;color:#b8c9da;margin:15px 0 7px}input{width:100%;padding:13px 14px;background:#081426;border:1px solid #35536d;border-radius:10px;color:#fff;font-size:15px}button{width:100%;margin-top:22px;padding:13px;border:0;border-radius:11px;background:linear-gradient(100deg,#17d6ed,#63f44a);color:#071608;box-shadow:0 0 20px #24edb455;font-weight:800;font-size:15px;cursor:pointer}button:disabled{opacity:.6;cursor:wait}.secondary{background:#17344c;color:#d7e7f5;margin-top:14px}.error{color:#ffb3b3}.success{color:#95ef9b}.notice{margin-top:17px;font-size:13px;min-height:18px;overflow-wrap:anywhere}.hide{display:none}.balance{font-size:52px;color:#7eff65;font-weight:850;margin:6px 0}.small{color:#a9bfd0;font-size:13px}.name{font-size:19px;font-weight:700}.chip{display:inline-block;background:#1a3e34;color:#a8f8a5;padding:6px 10px;border-radius:20px;font-size:12px;margin-top:10px}
+@media(max-width:650px){body{background-attachment:scroll;background-position:center center;padding:14px}.panel{padding:24px 20px;background:rgba(3,12,29,.92)}}
+</style>
+</head>
+<body>
+<main class="panel">
+  <div class="brand">BLiZ <span>TV</span></div>
+  <div class="sub">Reseller Panel · Тест верзија</div>
+  <section id="loginSection">
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="username" required placeholder="reseller@example.com" />
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" required placeholder="Внеси лозинка" />
+      <button id="loginButton" type="submit">Login</button>
+    </form>
+  </section>
+  <section id="dashboard" class="hide">
+    <div class="name" id="resellerName"></div>
+    <div class="chip">Активен реселер</div>
+    <p class="small">Достапни кредити</p>
+    <div class="balance" id="credits">—</div>
+    <p class="small">1 кредит = 1 доживотен активациски код</p>
+    <button id="refreshButton" class="secondary" type="button">Освежи кредити</button>
+    <button id="logoutButton" class="secondary" type="button">Logout</button>
+  </section>
+  <div id="status" class="notice" role="status" aria-live="polite"></div>
+</main>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const SUPABASE_URL = 'https://noyvamodeyswhnpssvpf.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_dyPJYKKpprqYXdjWnhl6wQ_bz9eVrwx';
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+const $ = id => document.getElementById(id);
+let accessToken = null;
+function status(message, isError=false){$('status').textContent=message;$('status').className='notice '+(isError?'error':'success')}
+function busy(on){$('loginButton').disabled=on;$('refreshButton').disabled=on}
+function showLogin(){accessToken=null;$('dashboard').classList.add('hide');$('loginSection').classList.remove('hide');$('password').value=''}
+async function loadDashboard(){
+  if(!accessToken){showLogin();return}
+  const response=await fetch(`${SUPABASE_URL}/functions/v1/bliztv-reseller-api`,{method:'POST',headers:{'Authorization':`Bearer ${accessToken}`,'apikey':SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json'},body:JSON.stringify({})});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok||!data.success)throw new Error(data.error||`API грешка (${response.status})`);
+  $('resellerName').textContent=data.reseller_name||'Reseller';
+  $('credits').textContent=String(data.credits??0);
+  $('loginSection').classList.add('hide');$('dashboard').classList.remove('hide');status('Успешно поврзување со BLiZ TV Reseller API.');
+}
+$('loginForm').addEventListener('submit',async event=>{
+  event.preventDefault();busy(true);status('Се проверува најавата...');
+  try{
+    const {data,error}=await supabase.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+    if(error||!data.session)throw new Error(error?.message||'Неуспешна најава');
+    accessToken=data.session.access_token;
+    await loadDashboard();
+  }catch(err){await supabase.auth.signOut();showLogin();status(err.message||'Грешка при најава',true)}finally{busy(false)}
+});
+$('refreshButton').addEventListener('click',async()=>{busy(true);try{await loadDashboard()}catch(err){status(err.message||'Грешка',true)}finally{busy(false)}});
+$('logoutButton').addEventListener('click',async()=>{await supabase.auth.signOut();showLogin();status('Одјавен си.')});
+</script>
+</body>
+</html>
