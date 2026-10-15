@@ -126,7 +126,9 @@ $('resetForm').addEventListener('submit',async event=>{
     status('Лозинката е сменета. Најави се со новата лозинка.');
   }catch(err){status(err.message||'Грешка при промена',true)}finally{$('savePasswordButton').disabled=false}
 });
-const recoveryLink=location.hash.includes('type=recovery')||new URLSearchParams(location.search).get('type')==='recovery'||new URLSearchParams(location.search).has('token_hash');
+const params=new URLSearchParams(location.search);
+const linkType=params.get('type')||(location.hash.match(/(?:^|[&#])type=([^&]+)/)?.[1]??'');
+const recoveryLink=linkType==='recovery'||linkType==='invite'||params.has('token_hash');
 if(recoveryLink){
   showSection('resetSection');status('Се проверува линкот за ресетирање...');
   (async()=>{
