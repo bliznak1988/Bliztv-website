@@ -473,6 +473,7 @@ const originalShowLogin = showLogin;
 
 showDashboard = function() {
   originalShowDashboard();
+  $("createResellerSection").classList.remove("hidden");
   $("historySection").classList.remove("hidden");
   loadCreditHistory().catch(error => message(error.message));
 };
