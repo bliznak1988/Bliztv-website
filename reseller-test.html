@@ -134,10 +134,16 @@ if(recoveryLink){
   (async()=>{
     try{
       const params=new URLSearchParams(location.search);
-      if(params.has('token_hash')){
-        const {error}=await supabase.auth.verifyOtp({token_hash:params.get('token_hash'),type:'recovery'});
-        if(error)throw error;
-      }
+     if(params.has('token_hash')){
+  const otpType = linkType === 'invite' ? 'invite' : 'recovery';
+
+  const {error}=await supabase.auth.verifyOtp({
+    token_hash:params.get('token_hash'),
+    type:otpType
+  });
+
+  if(error)throw error;
+}
       const {data:{session},error}=await supabase.auth.getSession();
       if(error||!session)throw new Error('Линкот е невалиден или истечен. Побарај нов линк.');
       status('Внеси ја новата лозинка.');
