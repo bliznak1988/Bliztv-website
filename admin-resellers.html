@@ -16,12 +16,12 @@ body {
   color: white;
 }
 header {
-  padding: 22px;
   background: #0b2237;
   border-bottom: 1px solid #23445c;
+  padding: 22px;
 }
-h1 { margin: 0; color: #70ff52; }
-main { max-width: 1050px; margin: auto; padding: 24px; }
+h1 { color: #70ff52; margin: 0; }
+main { max-width: 1100px; margin: auto; padding: 24px; }
 .card {
   background: #10283e;
   border: 1px solid #254761;
@@ -29,22 +29,27 @@ main { max-width: 1050px; margin: auto; padding: 24px; }
   border-radius: 15px;
   margin-bottom: 20px;
 }
-input, button {
+input, select {
+  width: 100%;
   padding: 13px;
+  margin: 8px 0;
+  border: 1px solid #35536d;
   border-radius: 8px;
-  border: 0;
   font-size: 15px;
 }
-input { width: 100%; margin: 8px 0; }
 button {
+  padding: 12px 15px;
+  border: 0;
+  border-radius: 8px;
   background: #65ed4b;
   color: #062010;
   font-weight: bold;
   cursor: pointer;
   margin: 5px 5px 5px 0;
 }
-button:disabled { opacity: .5; cursor: wait; }
+button:disabled { opacity: .5; cursor: not-allowed; }
 .secondary { background: #29465d; color: white; }
+.danger { background: #e96c6c; color: #270909; }
 .hidden { display: none; }
 #message { margin: 12px 0; color: #ffb3b3; }
 .table-wrap { overflow-x: auto; }
@@ -57,7 +62,9 @@ th, td {
 th { color: #8fdcff; }
 .active { color: #76ff70; }
 .inactive { color: #ff8888; }
-.stats { font-size: 25px; font-weight: bold; color: #70ff52; }
+.stats { font-size: 26px; font-weight: bold; color: #70ff52; }
+label { display: block; margin-top: 12px; }
+small { color: #a5b9cd; }
 </style>
 </head>
 <body>
@@ -85,6 +92,7 @@ th { color: #8fdcff; }
     </div>
 
     <div class="card table-wrap">
+      <h3>All Resellers</h3>
       <table>
         <thead>
           <tr>
@@ -96,6 +104,26 @@ th { color: #8fdcff; }
         </thead>
         <tbody id="resellerRows"></tbody>
       </table>
+    </div>
+
+    <div class="card">
+      <h2>Manage Credits</h2>
+
+      <label for="resellerSelect">Select Reseller</label>
+      <select id="resellerSelect"></select>
+
+      <label for="amount">Number of Credits</label>
+      <input id="amount" type="number" min="1" max="100000"
+             step="1" placeholder="Example: 10">
+
+      <label for="reason">Reason</label>
+      <input id="reason" type="text" maxlength="200"
+             placeholder="Example: Payment received">
+
+      <button id="addButton">+ Add Credits</button>
+      <button id="removeButton" class="danger">- Remove Credits</button>
+
+      <p><small>Every change is recorded in Supabase credit history.</small></p>
     </div>
   </section>
 
@@ -113,12 +141,19 @@ const ADMIN_ID =
   "a1388d57-c60b-4ab1-bf8a-44f03cd6d47e";
 
 const client = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+  SUPABASE_URL, SUPABASE_KEY
 );
 
 const $ = id => document.getElementById(id);
 const message = text => { $("message").textContent = text; };
+
+let busy = false;
+
+function setBusy(value) {
+  busy = value;
+  ["loginButton", "refreshButton", "addButton", "removeButton"]
+    .forEach(id => $(id).disabled = value);
+}
 
 function showLogin() {
   $("loginBox").classList.remove("hidden");
@@ -130,17 +165,11 @@ function showDashboard() {
   $("dashboard").classList.remove("hidden");
 }
 
-async function loadResellers() {
-  message("");
-
+async function apiRequest(action, extra = {}) {
   const { data: sessionData } = await client.auth.getSession();
   const token = sessionData.session?.access_token;
 
-  if (!token) {
-    showLogin();
-    message("Please login.");
-    return;
-  }
+  if (!token) throw new Error("Please login again.");
 
   const response = await fetch(
     SUPABASE_URL + "/functions/v1/bliztv-super-admin",
@@ -151,19 +180,28 @@ async function loadResellers() {
         "apikey": SUPABASE_KEY,
         "Authorization": "Bearer " + token
       },
-      body: JSON.stringify({ action: "list_resellers" })
+      body: JSON.stringify({ action, ...extra })
     }
   );
 
   const result = await response.json();
 
   if (!response.ok || !result.success) {
-    throw new Error(result.error || "Could not load resellers");
+    throw new Error(result.error || "Request failed");
   }
 
+  return result;
+}
+
+async function loadResellers() {
+  const result = await apiRequest("list_resellers");
   const resellers = result.resellers || [];
+
   $("totalResellers").textContent = resellers.length;
   $("resellerRows").replaceChildren();
+
+  const selected = $("resellerSelect").value;
+  $("resellerSelect").replaceChildren();
 
   for (const reseller of resellers) {
     const tr = document.createElement("tr");
@@ -184,12 +222,23 @@ async function loadResellers() {
     });
 
     $("resellerRows").appendChild(tr);
+
+    const option = document.createElement("option");
+    option.value = reseller.id;
+    option.textContent =
+      (reseller.reseller_name || "Unnamed") +
+      " — " + reseller.credits + " credits";
+    $("resellerSelect").appendChild(option);
+  }
+
+  if (resellers.some(r => r.id === selected)) {
+    $("resellerSelect").value = selected;
   }
 }
 
 async function login() {
-  const button = $("loginButton");
-  button.disabled = true;
+  if (busy) return;
+  setBusy(true);
   message("");
 
   try {
@@ -202,7 +251,7 @@ async function login() {
 
     if (data.user?.id !== ADMIN_ID) {
       await client.auth.signOut();
-      throw new Error("Access denied: not an administrator");
+      throw new Error("Access denied");
     }
 
     await loadResellers();
@@ -211,19 +260,83 @@ async function login() {
     showLogin();
     message(error.message);
   } finally {
-    button.disabled = false;
+    setBusy(false);
+  }
+}
+
+async function adjustCredits(direction) {
+  if (busy) return;
+
+  const resellerId = $("resellerSelect").value;
+  const rawAmount = $("amount").value.trim();
+  const quantity = Number(rawAmount);
+  const reason = $("reason").value.trim();
+
+  if (
+    !resellerId ||
+    !/^[1-9]\d*$/.test(rawAmount) ||
+    !Number.isSafeInteger(quantity) ||
+    quantity > 100000 ||
+    reason.length < 3 ||
+    reason.length > 200
+  ) {
+    message("Select a reseller, enter valid credits and a reason.");
+    return;
+  }
+
+  const amount = direction * quantity;
+  const selectedName =
+    $("resellerSelect").selectedOptions[0]?.textContent || "Reseller";
+
+  const confirmed = confirm(
+    (amount > 0 ? "ADD " : "REMOVE ") +
+    quantity + " credits for " + selectedName + "?"
+  );
+
+  if (!confirmed) return;
+
+  setBusy(true);
+  message("");
+
+  try {
+    const result = await apiRequest("adjust_credits", {
+      reseller_id: resellerId,
+      amount,
+      reason
+    });
+
+    message("Success! New balance: " + result.credits);
+    $("amount").value = "";
+    $("reason").value = "";
+
+    await loadResellers();
+  } catch (error) {
+    message(
+      error.message +
+      " If the request was interrupted, refresh and check balance before retrying."
+    );
+  } finally {
+    setBusy(false);
   }
 }
 
 $("loginButton").addEventListener("click", login);
 
 $("refreshButton").addEventListener("click", async () => {
+  if (busy) return;
+  setBusy(true);
   try {
     await loadResellers();
+    message("Resellers updated.");
   } catch (error) {
     message(error.message);
+  } finally {
+    setBusy(false);
   }
 });
+
+$("addButton").addEventListener("click", () => adjustCredits(1));
+$("removeButton").addEventListener("click", () => adjustCredits(-1));
 
 $("logoutButton").addEventListener("click", async () => {
   await client.auth.signOut();
