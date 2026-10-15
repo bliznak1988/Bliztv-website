@@ -157,11 +157,7 @@ $('generateButton').addEventListener('click',async()=>{
 });
   
 $('historyButton').addEventListener('click', async () => {
-  $('historyButton').addEventListener('click', async () => {
-  alert('History копчето работи!');
-
-  const button = $('historyButton');
-  const button = $('historyButton');
+  const historyBtn = $('historyButton');
   const area = $('historyArea');
   const list = $('historyList');
 
@@ -170,7 +166,7 @@ $('historyButton').addEventListener('click', async () => {
     return;
   }
 
-  button.disabled = true;
+  historyBtn.disabled = true;
   list.textContent = 'Се вчитуваат кодовите...';
   area.classList.remove('hide');
 
@@ -201,7 +197,6 @@ $('historyButton').addEventListener('click', async () => {
       const created = code.created_at
         ? new Date(code.created_at).toLocaleString('mk-MK')
         : '—';
-
       const activated = code.activated_at
         ? new Date(code.activated_at).toLocaleString('mk-MK')
         : '—';
@@ -217,7 +212,7 @@ $('historyButton').addEventListener('click', async () => {
   } catch (err) {
     list.textContent = 'Грешка: ' + (err.message || 'Не може да се вчита историјата.');
   } finally {
-    button.disabled = false;
+    historyBtn.disabled = false;
   }
 });
 
