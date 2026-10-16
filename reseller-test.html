@@ -45,8 +45,11 @@
     <div class="chip">Активен реселер</div>
     <p class="small">Достапни кредити</p>
     <div class="balance" id="credits">—</div>
-    <p class="small">1 кредит = 1 доживотен активациски код</p>
-    <button id="generateButton" type="button">Generate Activation Code · −1 Credit</button>
+    <p class="small">TEST: 20 бесплатни кодови дневно · YEARLY: 1 кредит · LIFETIME: 2 кредити</p>
+    <p class="small" id="testRemaining">TEST денес: се проверува...</p>
+    <button id="testButton" type="button">Generate TEST · 24H · Бесплатно</button>
+    <button id="yearlyButton" type="button">Generate YEARLY · −1 Credit</button>
+    <button id="lifetimeButton" type="button">Generate LIFETIME · −2 Credits</button>
     <div id="generatedArea" class="hide">
       <p class="small">Нов активациски код</p>
       <div id="generatedCode" class="generated-code"></div>
@@ -75,14 +78,14 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {auth:{per
 const $ = id => document.getElementById(id);
 let accessToken = null;
 function status(message, isError=false){$('status').textContent=message;$('status').className='notice '+(isError?'error':'success')}
-function busy(on){$('loginButton').disabled=on;$('refreshButton').disabled=on;$('generateButton').disabled=on}
+function busy(on){for(const id of ['loginButton','refreshButton','testButton','yearlyButton','lifetimeButton'])$(id).disabled=on}
 function showSection(id){for(const name of ['loginSection','forgotSection','resetSection','dashboard'])$(name).classList.toggle('hide',name!==id)}
 function showLogin(){accessToken=null;showSection('loginSection');$('password').value='';$('generatedArea').classList.add('hide');$('generatedCode').textContent=''}
-async function apiRequest(action){
+async function apiRequest(action, extra={}){
   const {data:{session},error}=await supabase.auth.getSession();
   if(error||!session)throw new Error('Сесијата е истечена. Најави се повторно.');
   accessToken=session.access_token;
-  const response=await fetch(`${SUPABASE_URL}/functions/v1/bliztv-reseller-api`,{method:'POST',headers:{'Authorization':`Bearer ${accessToken}`,'apikey':SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json'},body:JSON.stringify(action?{action}:{})});
+  const response=await fetch(`${SUPABASE_URL}/functions/v1/bliztv-reseller-api`,{method:'POST',headers:{'Authorization':`Bearer ${accessToken}`,'apikey':SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json'},body:JSON.stringify(action?{action,...extra}:{})});
   const data=await response.json().catch(()=>({}));
   if(!response.ok||!data.success)throw new Error(data.error||`API грешка (${response.status})`);
   return data;
@@ -93,6 +96,7 @@ async function loadDashboard(){
   $('resellerName').textContent=data.reseller_name||'Reseller';
   $('credits').textContent=String(data.credits??0);
   showSection('dashboard');status('Успешно поврзување со BLiZ TV Reseller API.');
+  try{await updateTestCounter()}catch{$('testRemaining').textContent='TEST лимит: не може да се вчита';}
 }
 $('loginForm').addEventListener('submit',async event=>{
   event.preventDefault();busy(true);status('Се проверува најавата...');
@@ -156,20 +160,34 @@ status('Се проверува линкот за поставување лоз�
     }catch(err){status(err.message||'Неуспешна проверка на линкот',true)}
   })();
 }
-$('generateButton').addEventListener('click',async()=>{
-  if(!confirm('Да генерирам нов активациски код и да потрошам 1 кредит?'))return;
+async function updateTestCounter(){
+  const data=await apiRequest('list_codes');
+  // The API currently returns only the latest 100 codes; this is an indicative counter.
+  const today=new Date().toISOString().slice(0,10);
+  const count=(data.codes||[]).filter(c=>c.code_type==='test' &&
+    typeof c.created_at==='string' && c.created_at.slice(0,10)===today).length;
+  $('testRemaining').textContent=`TEST денес: најмалку ${count}/20 (UTC)`;
+}
+async function generateTypedCode(type,cost){
+  const labels={test:'TEST 24H',yearly:'YEARLY 365 дена',lifetime:'LIFETIME'};
+  if(!confirm(`Генерирај ${labels[type]} код? ${cost===0?'Бесплатно':`Цена: ${cost} кредит(и)`}.`))return;
   busy(true);status('Се генерира код...');
   try{
-    const data=await apiRequest('generate_code');
-    if(typeof data.activation_code!=='string'||!data.activation_code)throw new Error('Нема код во одговорот. Провери ја историјата пред повторен обид.');
+    const data=await apiRequest('generate_typed_code',{code_type:type});
+    if(typeof data.activation_code!=='string'||!data.activation_code)
+      throw new Error('Нема код во одговорот. Провери ја историјата пред повторен обид.');
     $('generatedCode').textContent=data.activation_code;
     $('generatedArea').classList.remove('hide');
     if(data.credits!==null&&data.credits!==undefined)$('credits').textContent=String(data.credits);
-    status('Кодот е генериран. Зачувај го или копирај го.');
-  }catch(err){status((err.message||'Грешка')+' Ако барањето било испратено, провери го балансот пред повторен обид.',true)}
+    status(`${labels[type]} кодот е генериран. Копирај го или зачувај го.`);
+    try{await updateTestCounter()}catch{}
+  }catch(err){status((err.message||'Грешка')+' Провери ја историјата пред повторен обид.',true)}
   finally{busy(false)}
-});
-  
+}
+$('testButton').addEventListener('click',()=>generateTypedCode('test',0));
+$('yearlyButton').addEventListener('click',()=>generateTypedCode('yearly',1));
+$('lifetimeButton').addEventListener('click',()=>generateTypedCode('lifetime',2));
+
 $('historyButton').addEventListener('click', async () => {
   const historyBtn = $('historyButton');
   const area = $('historyArea');
@@ -217,8 +235,10 @@ $('historyButton').addEventListener('click', async () => {
 
       details.textContent =
         'Создаден: ' + created +
-        ' | Статус: ' + (code.is_used ? 'Активиран' : 'Неактивиран') +
-        ' | Активиран на: ' + activated;
+        ' | Тип: ' + (code.code_type||'lifetime').toUpperCase() +
+         ' | Статус: ' + (code.is_used ? 'Активиран' : 'Неактивиран') +
+        ' | Активиран на: ' + activated +
+         ' | Истекува: ' + (code.expires_at ? new Date(code.expires_at).toLocaleString('mk-MK') : '—');
 
       item.append(codeText, details);
       list.appendChild(item);
