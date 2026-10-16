@@ -108,7 +108,12 @@ $('backButton').addEventListener('click',()=>{showLogin();status('')});
 $('forgotForm').addEventListener('submit',async event=>{
   event.preventDefault();$('sendRecoveryButton').disabled=true;status('Се испраќа линк...');
   try{
-    const {error}=await supabase.auth.resetPasswordForEmail($('recoveryEmail').value.trim(),{redirectTo:location.origin+location.pathname});
+    const {error}=await supabase.auth.resetPasswordForEmail(
+  $('recoveryEmail').value.trim(),
+  {
+    redirectTo: 'https://bliznak1988.github.io/Bliztv-website/reseller-test.html'
+  }
+);
     if(error)throw error;
     status('Ако постои корисник со овој email, ќе добие линк. Провери Inbox и Spam.');
   }catch(err){status(err.message||'Грешка при испраќање',true)}finally{$('sendRecoveryButton').disabled=false}
