@@ -1,0 +1,10 @@
+#EXTM3U x-tvg-url="https://bliztv.online/qa/demo-epg.xml"
+# Demo only: Big Buck Bunny (c) 2008 Blender Foundation, CC BY 3.0. Full credits retained.
+#EXTINF:-1 tvg-id="bliz-qa-1" tvg-logo="https://bliztv.online/qa/logo.png" group-title="LG QA Demo",Demo channel 1 - Big Buck Bunny
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 tvg-id="bliz-qa-2" tvg-logo="https://bliztv.online/qa/logo.png" group-title="LG QA Demo",Demo channel 2 - Big Buck Bunny 480p
+https://test-streams.mux.dev/x36xhzz/url_6/193039199_mp4_h264_aac_hq_7.m3u8
+#EXTINF:-1 tvg-logo="https://bliztv.online/qa/logo.png" group-title="LG QA Movies",Big Buck Bunny - CC BY 3.0
+https://bliztv.online/qa/movie/BBB-movie.m3u8
+#EXTINF:-1 tvg-logo="https://bliztv.online/qa/logo.png" group-title="LG QA Series",Big Buck Bunny - Demo episode
+https://bliztv.online/qa/series/BBB-episode-1.m3u8
