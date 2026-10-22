@@ -85,6 +85,22 @@ th, td { padding: 10px 12px; vertical-align: middle; white-space: nowrap; }
   th, td { padding: 8px; }
 }
 
+
+.activation-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,430px),1fr));gap:18px;margin-top:16px}
+.activation-card{background:#0a1e30;border:1px solid #31526d;border-radius:14px;padding:18px;min-width:0}
+.activation-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid #31526d;padding-bottom:12px}
+.activation-top strong{overflow-wrap:anywhere;font-size:18px}
+.activation-status{font-weight:bold}
+.activation-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.activation-details>div{min-width:0;overflow-wrap:anywhere}
+.activation-details small{display:block;margin-bottom:5px}
+.activation-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.activation-fields label{min-width:0;margin:0}
+.activation-fields input,.activation-fields textarea{width:100%;min-width:0;background:#fff;color:#111;padding:12px;border:1px solid #54718b;border-radius:8px;font:inherit;margin-top:7px;resize:vertical}
+.activation-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px}
+.activation-actions button{margin:0}
+.activation-actions small{width:100%}
+@media(max-width:550px){.activation-fields{grid-template-columns:1fr}.activation-details{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -233,10 +249,7 @@ th, td { padding: 10px 12px; vertical-align: middle; white-space: nowrap; }
     </select>
     <button id="refreshCodesButton" type="button" class="secondary">Refresh codes</button>
     <p><small>Latest 100 codes for the selected view. Unused codes start their validity when activated.</small></p>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Code</th><th>Type</th><th>Status</th><th>Owner</th><th>Created</th><th>Activated</th><th>Expires</th><th>Client name</th><th>Note</th><th>Controls</th></tr></thead>
-      <tbody id="activationRows"></tbody>
-    </table></div>
+    <div id="activationCards" class="activation-grid"></div>
   </section>
 
   <p id="message" role="status"></p>
@@ -544,48 +557,44 @@ async function loadActivationCodes() {
   const owner = $("codeOwnerFilter").value;
   const result = await apiRequest("list_activation_codes", { owner });
   if (!Array.isArray(result.codes)) throw new Error("Invalid code history response");
-  $("activationRows").replaceChildren();
+  const root = $("activationCards");
+  root.replaceChildren();
   const date = value => value ? new Date(value).toLocaleString() : "—";
   const resellerNames = Object.fromEntries(Array.from($("resellerSelect").options, option => [option.value, option.textContent.split(" — ")[0]]));
+  if (!result.codes.length) { root.textContent = "No activation codes yet."; return; }
   for (const code of result.codes) {
-    const tr = document.createElement("tr");
-    const values = [code.activation_code, (code.code_type || "unknown").toUpperCase(), codeStatus(code),
-      code.reseller_id ? (resellerNames[code.reseller_id] || "Reseller") : "Super Admin",
-      date(code.created_at), date(code.activated_at), code.expires_at ? date(code.expires_at) : (code.code_type === "lifetime" ? "No expiry" : "Starts on activation")];
-    for (const value of values) {
-      const td = document.createElement("td"); td.textContent = value; tr.appendChild(td);
-    }
-    const nameTd = document.createElement("td");
-    const nameInput = document.createElement("input"); nameInput.type = "text"; nameInput.maxLength = 120; nameInput.placeholder = "Client name"; nameInput.value = code.customer_name || ""; nameInput.style.minWidth = "140px"; nameTd.appendChild(nameInput); tr.appendChild(nameTd);
-    const noteTd = document.createElement("td");
-    const noteInput = document.createElement("input"); noteInput.type = "text"; noteInput.maxLength = 1000; noteInput.placeholder = "Private note"; noteInput.value = code.admin_note || ""; noteInput.style.minWidth = "170px"; noteTd.appendChild(noteInput); tr.appendChild(noteTd);
-    const controlTd = document.createElement("td");
-    const save = document.createElement("button"); save.type = "button"; save.textContent = "Save"; save.className = "secondary";
-    const toggle = document.createElement("button"); toggle.type = "button"; toggle.textContent = code.is_paused ? "RESUME" : "PAUSE"; toggle.style.marginLeft = "6px";
-    const feedback = document.createElement("small"); feedback.style.display = "block"; feedback.setAttribute("role","status");
-    const apply = async (action, extra) => {
-      if (busy) return;
-      save.disabled = true; toggle.disabled = true; feedback.textContent = "Saving…";
-      try {
-        const response = await apiRequest(action, { code_id: code.id, ...extra });
-        code.customer_name = response.client.customer_name; code.admin_note = response.client.admin_note; code.is_paused = response.client.is_paused;
-        toggle.textContent = code.is_paused ? "RESUME" : "PAUSE";
-        tr.children[2].textContent = code.is_paused ? "PAUSED" : codeStatus(code);
-        feedback.textContent = "Saved";
-      } catch (error) { feedback.textContent = error.message || "Update failed"; }
-      finally { save.disabled = false; toggle.disabled = false; }
+    const card = document.createElement("article"); card.className = "activation-card";
+    const top = document.createElement("div"); top.className = "activation-top";
+    const heading = document.createElement("strong"); heading.textContent = code.activation_code;
+    const status = document.createElement("span"); status.className = "activation-status";
+    const refreshStatus = () => { status.textContent = code.is_paused ? "PAUSED" : codeStatus(code); status.style.color = code.is_paused ? "#ff9a9a" : "#78ff70"; };
+    refreshStatus(); top.append(heading,status); card.appendChild(top);
+    const details = document.createElement("div"); details.className = "activation-details";
+    const ownerName = code.reseller_id ? (resellerNames[code.reseller_id] || "Reseller") : "Super Admin";
+    const items = [["Type", (code.code_type || "unknown").toUpperCase()],["Owner",ownerName],["Created",date(code.created_at)],["Activated",date(code.activated_at)],["Expires",code.expires_at ? date(code.expires_at) : (code.code_type === "lifetime" ? "No expiry" : "Starts on activation")]];
+    for (const [label,value] of items) { const el=document.createElement("div");const small=document.createElement("small");small.textContent=label;const txt=document.createElement("div");txt.textContent=value;el.append(small,txt);details.appendChild(el); }
+    card.appendChild(details);
+    const fields = document.createElement("div"); fields.className = "activation-fields";
+    const nameWrap=document.createElement("label");nameWrap.textContent="Client name";const nameInput=document.createElement("input");nameInput.maxLength=120;nameInput.placeholder="Client name";nameInput.value=code.customer_name||"";nameWrap.appendChild(nameInput);
+    const noteWrap=document.createElement("label");noteWrap.textContent="Private note";const noteInput=document.createElement("textarea");noteInput.maxLength=1000;noteInput.rows=2;noteInput.placeholder="Note";noteInput.value=code.admin_note||"";noteWrap.appendChild(noteInput);
+    fields.append(nameWrap,noteWrap);card.appendChild(fields);
+    const controls=document.createElement("div");controls.className="activation-actions";
+    const save=document.createElement("button");save.type="button";save.textContent="Save name & note";save.className="secondary";
+    const toggle=document.createElement("button");toggle.type="button";toggle.textContent=code.is_paused?"RESUME":"PAUSE";
+    const feedback=document.createElement("small");feedback.setAttribute("role","status");
+    const apply=async(action,extra)=>{
+      if(busy)return;
+      save.disabled=true;toggle.disabled=true;feedback.textContent="Saving…";
+      try{
+        const response=await apiRequest(action,{code_id:code.id,...extra});
+        code.customer_name=response.client.customer_name;code.admin_note=response.client.admin_note;code.is_paused=response.client.is_paused;
+        toggle.textContent=code.is_paused?"RESUME":"PAUSE";refreshStatus();feedback.textContent="Saved";
+      }catch(error){feedback.textContent=error.message||"Update failed";}
+      finally{save.disabled=false;toggle.disabled=false;}
     };
-    save.addEventListener("click", () => apply("update_client_details", { customer_name: nameInput.value, admin_note: noteInput.value }));
-    toggle.addEventListener("click", () => {
-      const next = code.is_paused ? "resume_client" : "pause_client";
-      if (confirm((code.is_paused ? "Resume" : "Pause") + " activation " + code.activation_code + "?")) apply(next, {});
-    });
-    controlTd.append(save, toggle, feedback); tr.appendChild(controlTd);
-    $("activationRows").appendChild(tr);
-  }
-  if (result.codes.length === 0) {
-    const tr = document.createElement("tr"); const td = document.createElement("td");
-    td.colSpan = 10; td.textContent = "No activation codes yet."; tr.appendChild(td); $("activationRows").appendChild(tr);
+    save.addEventListener("click",()=>apply("update_client_details",{customer_name:nameInput.value,admin_note:noteInput.value}));
+    toggle.addEventListener("click",()=>{if(confirm((code.is_paused?"Resume":"Pause")+" activation "+code.activation_code+"?"))apply(code.is_paused?"resume_client":"pause_client",{});});
+    controls.append(save,toggle,feedback);card.appendChild(controls);root.appendChild(card);
   }
 }
 
