@@ -64,26 +64,6 @@ th { color: #8fdcff; }
 .stats { font-size: 26px; font-weight: bold; color: #70ff52; }
 label { display: block; margin-top: 12px; }
 small { color: #a5b9cd; }
-
-/* SuperAdmin home navigation */
-#homeView {max-width:1100px;margin:0 auto 24px}
-.hero {border-radius:20px;overflow:hidden;position:relative;background:linear-gradient(115deg,#08142c,#103f61);border:1px solid #28567b;padding:24px;display:flex;align-items:center;gap:24px}
-.hero img {width:min(38%,270px);height:150px;object-fit:contain;border-radius:12px}
-.hero h2 {font-size:clamp(24px,4vw,38px);margin:0;color:#83ff69}
-.hero p {color:#bbd7ea}
-.home-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:14px;margin:18px 0}
-.nav-tile {text-align:left;background:linear-gradient(145deg,#112d47,#092035);border:1px solid #2b5877;border-radius:16px;color:white;min-height:122px;padding:19px;transition:transform .15s,border-color .15s;width:100%}
-.nav-tile:hover,.nav-tile:focus-visible {transform:translateY(-2px);border-color:#75ff68;outline:2px solid transparent}
-.nav-tile strong {display:block;color:#8aff75;font-size:19px;margin-bottom:8px}
-.nav-tile span {color:#c3d5e3;font-size:13px}
-#backHome {background:#2d4c67;color:white;margin-bottom:15px}
-#dashboard.section-mode > .card,#dashboard.section-mode > .table-wrap {display:none}
-#dashboard.section-mode > .card.active-panel {display:block}
-#dashboard.section-mode #homeView {display:none}
-#dashboard:not(.section-mode) > .card:not(:first-of-type) {display:none}
-#dashboard:not(.section-mode) #backHome {display:none}
-#dashboard.section-mode #backHome {display:inline-block}
-@media(max-width:650px){.hero{flex-direction:column;text-align:center}.hero img{width:85%;height:140px}}
 </style>
 </head>
 <body>
@@ -102,19 +82,6 @@ small { color: #a5b9cd; }
   </section>
 
   <section id="dashboard" class="hidden">
-    <div id="homeView">
-      <div class="hero"><img src="pair-logo.jpg" alt="BLiZ TV logo"><div><h2>BLiZ TV</h2><p>SUPER ADMIN CONTROL CENTER</p><p>Сите функции на едно место</p></div></div>
-      <div class="home-grid">
-        <button class="nav-tile" data-panel="iptvTrialSection" type="button"><strong>▶ IPTV Trial</strong><span>Генерирање IPTV тест-листи</span></button>
-        <button class="nav-tile" data-panel="activationSection" type="button"><strong>🔑 Activation Codes</strong><span>TEST · YEARLY · LIFETIME · History</span></button>
-        <button class="nav-tile" data-panel="resellerListCard" type="button"><strong>👥 Resellers</strong><span>Преглед на сите партнери</span></button>
-        <button class="nav-tile" data-panel="creditsCard" type="button"><strong>💳 Manage Credits</strong><span>Додавање и одземање кредити</span></button>
-        <button class="nav-tile" data-panel="createResellerSection" type="button"><strong>➕ Create Reseller</strong><span>Нов reseller и покана</span></button>
-        <button class="nav-tile" data-panel="historySection" type="button"><strong>📋 Credit History</strong><span>Историја на трансакции</span></button>
-      </div>
-    </div>
-    <button id="backHome" type="button">← Back to Home</button>
-
     <div class="card">
       <h2>Reseller Management</h2>
       <p>Total Resellers</p>
@@ -644,26 +611,11 @@ $("copyTrialButton").addEventListener("click", async () => {
   catch { $("trialM3u").select(); $("trialMessage").textContent = "Select and copy the M3U URL manually."; }
 });
 
-
-function openAdminPanel(id) {
-  const dashboard = $("dashboard");
-  dashboard.classList.add("section-mode");
-  dashboard.querySelectorAll(".active-panel").forEach(el => el.classList.remove("active-panel"));
-  const target = $(id);
-  if (target) { target.classList.add("active-panel"); target.scrollIntoView({block:"start",behavior:"smooth"}); }
-}
-function adminHome() {
-  $("dashboard").classList.remove("section-mode");
-  document.querySelectorAll(".active-panel").forEach(el => el.classList.remove("active-panel"));
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-document.querySelectorAll("[data-panel]").forEach(btn => btn.addEventListener("click", () => openAdminPanel(btn.dataset.panel)));
-$("backHome").addEventListener("click", adminHome);
-\nconst originalShowDashboard = showDashboard;
+const originalShowDashboard = showDashboard;
 const originalShowLogin = showLogin;
 
 showDashboard = function() {
-  originalShowDashboard();\n  adminHome();
+  originalShowDashboard();
   $("createResellerSection").classList.remove("hidden");
   $("historySection").classList.remove("hidden");
   $("activationSection").classList.remove("hidden");
