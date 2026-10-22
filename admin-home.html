@@ -17,7 +17,11 @@ function openSection(section){
  el("workspaceTitle").textContent=sections[section];
  const frame=el("managementFrame");
  const url="admin-client-controls-preview.html#"+section;
- if(frame.getAttribute("src")!==url)frame.setAttribute("src",url);
+ if(section==="expiredTestsArchive"){
+  frame.setAttribute("src","admin-client-controls-preview.html?view=expired-tests#expiredTestsArchive");
+}else if(frame.getAttribute("src")!==url){
+  frame.setAttribute("src",url);
+}
  document.querySelectorAll(".nav a").forEach(a=>{a.classList.toggle("selected",a.hash==="#"+section);a.removeAttribute("aria-current");if(a.hash==="#"+section)a.setAttribute("aria-current","page");});
  history.replaceState(null,"","#"+section);
  window.scrollTo(0,0);
