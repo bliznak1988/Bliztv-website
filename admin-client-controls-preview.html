@@ -631,6 +631,13 @@ function syncArchiveHash(){
  }
 }
 window.addEventListener("hashchange", syncArchiveHash);
+window.addEventListener("message", event => {
+  if(event.origin !== location.origin || event.data?.type !== "BLIZ_OPEN_EXPIRED_ARCHIVE") return;
+  setArchiveView(true);
+  $("activationSection").classList.remove("hidden");
+  $("expiredTestsArchive").scrollIntoView({block:"start"});
+});
+
 $("activeCodesTab").addEventListener("click", () => setArchiveView(false));
 $("expiredTestsTab").addEventListener("click", () => setArchiveView(true));
 syncArchiveHash();
