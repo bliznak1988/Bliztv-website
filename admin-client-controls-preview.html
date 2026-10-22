@@ -101,13 +101,13 @@ th, td { padding: 10px 12px; vertical-align: middle; white-space: nowrap; }
 .activation-actions button{margin:0}
 .activation-actions small{width:100%}
 @media(max-width:550px){.activation-fields{grid-template-columns:1fr}.activation-details{grid-template-columns:1fr 1fr}}
-</style>
+body{background:linear-gradient(135deg,#f5fff2,#eaffdf,#f9fff6);color:#173426;font-family:Inter,system-ui,Arial,sans-serif}header{background:#efffeb;border-color:#c7e8bd;display:flex;align-items:center;gap:20px;flex-wrap:wrap}header h1{color:#236c39}header small{color:#4e7755}.card,.activation-card{background:#fff;border:1px solid #beddb7;color:#173426;box-shadow:0 5px 20px #1d51200a}h2,h3{color:#225c32}small,.activation-details small{color:#66806a}th{color:#326c42}th,td,.activation-top{border-color:#d5e9d0}.stats{color:#2b8c43}button{background:#3e9e51;color:white}.secondary{background:#dcefd8;color:#245d31}.danger{background:#f9d3d0;color:#7b2525}.activation-card{background:#fafff8}.active{color:#1e8c40}.inactive{color:#bc4b4b}input,select,textarea{background:white;color:#193926;border:1px solid #b5d1b0}#message{color:#ad3535}.supernav{display:flex;gap:9px;flex-wrap:wrap;margin-left:auto}.supernav a{background:#e0f5db;color:#215c31;border:1px solid #c3e2bd;border-radius:10px;padding:10px 13px;text-decoration:none;font-weight:650;font-size:13px}.supernav a:hover{background:#c9edc2}section[id]{scroll-margin-top:16px}</style>
 </head>
 <body>
 
 <header>
   <h1>BLiZ TV</h1>
-  <small>SUPER ADMIN DASHBOARD</small>
+  <small>SUPER ADMIN DASHBOARD</small><nav class="supernav"><a href="admin-home.html">⌂ Dashboard</a><a href="#activationSection">🔑 Activation Codes / Clients</a><a href="#resellersSection">🤝 Resellers</a><a href="#creditsSection">💳 Credits</a><a href="#iptvTrialSection">📺 IPTV Trials</a><a href="#historySection">📋 History</a></nav>
 </header>
 
 <main>
@@ -119,7 +119,7 @@ th, td { padding: 10px 12px; vertical-align: middle; white-space: nowrap; }
   </section>
 
   <section id="dashboard" class="hidden">
-    <div class="card">
+    <div class="card" id="resellersSection">
       <h2>Reseller Management</h2>
       <p>Total Resellers</p>
       <div id="totalResellers" class="stats">0</div>
@@ -158,7 +158,7 @@ th, td { padding: 10px 12px; vertical-align: middle; white-space: nowrap; }
       </table>
     </div>
 
-    <div class="card">
+    <div class="card" id="creditsSection">
       <h2>Manage Credits</h2>
 
       <label for="resellerSelect">Select Reseller</label>
