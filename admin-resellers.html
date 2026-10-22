@@ -90,6 +90,22 @@ small { color: #a5b9cd; }
       <button id="logoutButton" class="secondary">Logout</button>
     </div>
 
+
+    <div class="card" id="iptvTrialSection">
+      <h2>IPTV Trial</h2>
+      <p><small>Generate a 24-hour IPTV playlist trial. This is separate from device activation TEST codes.</small></p>
+      <label for="trialNote">Notes — client name</label>
+      <input id="trialNote" type="text" maxlength="150" placeholder="Example: Marko - Telegram">
+      <button id="trialButton" type="button">Generate IPTV Trial</button>
+      <p id="trialMessage" role="status" aria-live="polite"></p>
+      <div id="trialDetails" class="hidden">
+        <p>Username: <strong id="trialUsername"></strong></p>
+        <p>Password: <strong id="trialPassword"></strong></p>
+        <label for="trialM3u">M3U URL</label>
+        <input id="trialM3u" type="text" readonly>
+        <button id="copyTrialButton" type="button" class="secondary">Copy Trial Details</button>
+      </div>
+    </div>
     <div class="card table-wrap">
       <h3>All Resellers</h3>
       <table>
@@ -565,6 +581,34 @@ $("copyActivationButton").addEventListener("click", async () => {
   if (!value) return;
   try { await navigator.clipboard.writeText(value); $("codeMessage").textContent = "Code copied."; }
   catch { $("adminGeneratedCode").select(); $("codeMessage").textContent = "Select and copy the code manually."; }
+});
+
+
+async function generateIptvTrial() {
+  if (busy) return;
+  const button = $("trialButton");
+  button.disabled = true;
+  $("trialDetails").classList.add("hidden");
+  $("trialMessage").textContent = "Creating IPTV trial...";
+  try {
+    const { data: sessionData, error: sessionError } = await client.auth.getSession();
+    if (sessionError || sessionData.session?.user?.id !== ADMIN_ID) throw new Error("Please sign in as Super Admin.");
+    const { data, error } = await client.functions.invoke("bliztv-generate-trial", { body: { note: $("trialNote").value.trim() } });
+    if (error || !data?.success || !data?.m3u_url) throw new Error(data?.error || error?.message || "Could not create IPTV trial.");
+    $("trialUsername").textContent = data.username || "Not provided";
+    $("trialPassword").textContent = data.password || "Not provided";
+    $("trialM3u").value = data.m3u_url;
+    $("trialDetails").classList.remove("hidden");
+    $("trialMessage").textContent = "IPTV trial created successfully.";
+  } catch (error) {
+    $("trialMessage").textContent = error.message || "Could not create IPTV trial.";
+  } finally { button.disabled = false; }
+}
+$("trialButton").addEventListener("click", generateIptvTrial);
+$("copyTrialButton").addEventListener("click", async () => {
+  const details = "BLiZ TV — IPTV Trial\\nUsername: " + $("trialUsername").textContent + "\\nPassword: " + $("trialPassword").textContent + "\\nM3U URL: " + $("trialM3u").value;
+  try { await navigator.clipboard.writeText(details); $("trialMessage").textContent = "Trial details copied."; }
+  catch { $("trialM3u").select(); $("trialMessage").textContent = "Select and copy the M3U URL manually."; }
 });
 
 const originalShowDashboard = showDashboard;
