@@ -249,7 +249,7 @@ body{background:linear-gradient(135deg,#f5fff2,#eaffdf,#f9fff6);color:#173426;fo
     </select>
     <button id="refreshCodesButton" type="button" class="secondary">Refresh codes</button>
     <p><small>Latest 100 codes for the selected view. Expired 24-hour TEST codes are hidden automatically on refresh; records remain in Supabase. Unused codes start their validity when activated.</small></p>
-    <div class="archive-tools"><button id="activeCodesTab" type="button" class="current">📋 Active / Pending</button><button id="expiredTestsTab" type="button" class="secondary">📁 Expired TEST Archive</button><input id="archiveSearch" type="search" placeholder="Search code, client name or note" aria-label="Search archive" class="hidden"></div><p class="archive-hint" id="archiveHint">Expired 24-hour tests are stored in the archive view automatically.</p><div id="activationCards" class="activation-grid"></div>
+    <div id="expiredTestsArchive" class="archive-tools"><button id="activeCodesTab" type="button" class="current">📋 Active / Pending</button><button id="expiredTestsTab" type="button" class="secondary">📁 Expired TEST Archive</button><input id="archiveSearch" type="search" placeholder="Search code, client name or note" aria-label="Search archive" class="hidden"></div><p class="archive-hint" id="archiveHint">Expired 24-hour tests are stored in the archive view automatically.</p><div id="activationCards" class="activation-grid"></div>
   </section>
 
   <p id="message" role="status"></p>
@@ -620,8 +620,11 @@ function setArchiveView(archive) {
   $("archiveSearch").classList.toggle("hidden", !archive);
   loadActivationCodes().catch(error => { $("codeMessage").textContent = error.message; });
 }
+function syncArchiveHash(){ if(location.hash === "#expiredTestsArchive") setArchiveView(true); }
+window.addEventListener("hashchange", syncArchiveHash);
 $("activeCodesTab").addEventListener("click", () => setArchiveView(false));
 $("expiredTestsTab").addEventListener("click", () => setArchiveView(true));
+syncArchiveHash();
 $("archiveSearch").addEventListener("input", event => {
   archiveSearchTerm = event.target.value.trim().toLowerCase();
   loadActivationCodes().catch(error => { $("codeMessage").textContent = error.message; });
