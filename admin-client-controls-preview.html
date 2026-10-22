@@ -555,7 +555,7 @@ function codeStatus(code) {
 let codeArchiveView = false;
 let archiveSearchTerm = "";
 async function loadActivationCodes() {
-  const owner = $("codeOwnerFilter").value;
+  const owner = codeArchiveView ? "all" : $("codeOwnerFilter").value;
   const result = await apiRequest("list_activation_codes", { owner });
   if (!Array.isArray(result.codes)) throw new Error("Invalid code history response");
   const root = $("activationCards");
@@ -564,17 +564,17 @@ async function loadActivationCodes() {
   const resellerNames = Object.fromEntries(Array.from($("resellerSelect").options, option => [option.value, option.textContent.split(" — ")[0]]));
   const now = Date.now();
   const expiredTest = code => {
-    if (String(code.code_type || "").toLowerCase() !== "test") return false;
-    if (!code.activated_at || !code.expires_at) return false;
+    if (!["test","trial","24h","24_hour"].includes(String(code.code_type || "").toLowerCase())) return false;
+    if (!code.expires_at) return false;
     const expires = Date.parse(code.expires_at);
     return Number.isFinite(expires) && expires <= now;
   };
   const visibleCodes = result.codes.filter(code => codeArchiveView ? expiredTest(code) : !expiredTest(code))
     .filter(code => !codeArchiveView || !archiveSearchTerm || [code.activation_code,code.customer_name,code.admin_note].some(v => String(v || "").toLowerCase().includes(archiveSearchTerm)));
   $("archiveHint").textContent = codeArchiveView
-    ? "Archive: expired activated 24-hour TEST codes from the latest 100 records in this owner view. Search applies to loaded records; Supabase records are preserved."
+    ? "Archive: expired 24-hour TEST codes from the latest 100 records across all owners. Search applies to loaded records; Supabase records are preserved."
     : "Expired activated 24-hour TEST codes automatically appear in the archive view; other codes stay here.";
-  if (!visibleCodes.length) { root.textContent = codeArchiveView ? "No matching expired TEST codes in the latest records." : "No active or pending codes in the latest records."; return; }
+  if (!visibleCodes.length) { root.textContent = codeArchiveView ? "No expired TEST codes found among the latest 100 returned records. Older records may exist in Supabase." : "No active or pending codes in the latest records."; return; }
   for (const code of visibleCodes) {
     const card = document.createElement("article"); card.className = "activation-card";
     const top = document.createElement("div"); top.className = "activation-top";
@@ -618,7 +618,7 @@ function setArchiveView(archive) {
   $("activeCodesTab").classList.toggle("secondary", archive);
   $("expiredTestsTab").classList.toggle("secondary", !archive);
   $("archiveSearch").classList.toggle("hidden", !archive);
-  loadActivationCodes().catch(error => { $("codeMessage").textContent = error.message; });
+  loadActivationCodes().catch(error => { $("archiveHint").textContent = "Archive loading error: " + error.message; });
 }
 function syncArchiveHash(){
  if(location.hash === "#expiredTestsArchive" || new URLSearchParams(location.search).get("view")==="expired-tests"){
@@ -726,7 +726,7 @@ showLogin = function() {
   $("activationSection").classList.add("hidden");
   $("generatedCodeArea").classList.add("hidden");
   $("adminGeneratedCode").value = "";
-  $("activationRows").replaceChildren();
+  $("activationCards").replaceChildren();
   $("codeMessage").textContent = "";
 };
 
