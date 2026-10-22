@@ -380,8 +380,7 @@ async function login() {
       throw new Error("Access denied");
     }
 
-    await loadResellers();
-    showDashboard();
+    window.location.assign("admin-home.html");
   } catch (error) {
     showLogin();
     message(error.message);
