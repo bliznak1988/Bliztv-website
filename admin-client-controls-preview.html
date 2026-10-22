@@ -248,7 +248,7 @@ body{background:linear-gradient(135deg,#f5fff2,#eaffdf,#f9fff6);color:#173426;fo
       <option value="all">All codes</option>
     </select>
     <button id="refreshCodesButton" type="button" class="secondary">Refresh codes</button>
-    <p><small>Latest 100 codes for the selected view. Unused codes start their validity when activated.</small></p>
+    <p><small>Latest 100 codes for the selected view. Expired 24-hour TEST codes are hidden automatically on refresh; records remain in Supabase. Unused codes start their validity when activated.</small></p>
     <div id="activationCards" class="activation-grid"></div>
   </section>
 
@@ -560,8 +560,16 @@ async function loadActivationCodes() {
   root.replaceChildren();
   const date = value => value ? new Date(value).toLocaleString() : "—";
   const resellerNames = Object.fromEntries(Array.from($("resellerSelect").options, option => [option.value, option.textContent.split(" — ")[0]]));
-  if (!result.codes.length) { root.textContent = "No activation codes yet."; return; }
-  for (const code of result.codes) {
+  const now = Date.now();
+  const visibleCodes = result.codes.filter(code => {
+    const type = String(code.code_type || "").toLowerCase();
+    if (type !== "test") return true;
+    if (!code.expires_at || !code.activated_at) return true;
+    const expires = Date.parse(code.expires_at);
+    return !Number.isFinite(expires) || expires > now;
+  });
+  if (!visibleCodes.length) { root.textContent = "No active or pending codes in the latest results. Expired 24-hour TEST codes are hidden."; return; }
+  for (const code of visibleCodes) {
     const card = document.createElement("article"); card.className = "activation-card";
     const top = document.createElement("div"); top.className = "activation-top";
     const heading = document.createElement("strong"); heading.textContent = code.activation_code;
