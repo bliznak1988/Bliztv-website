@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -174,6 +173,35 @@ small { color: #a5b9cd; }
   </div>
 </section>
 
+
+  <section id="activationSection" class="card hidden">
+    <h2>Activation Codes</h2>
+    <p>Create codes directly as Super Admin. No reseller credits or daily TEST limit.</p>
+    <p><small>Validity begins at first activation: TEST 24 hours, YEARLY 365 days, LIFETIME no expiry. TEST remains one trial per device.</small></p>
+    <button id="generateTestButton" type="button">Generate TEST · 24 hours</button>
+    <button id="generateYearlyButton" type="button">Generate YEARLY · 365 days</button>
+    <button id="generateLifetimeButton" type="button">Generate LIFETIME</button>
+    <p id="codeMessage" role="status" aria-live="polite"></p>
+    <div id="generatedCodeArea" class="hidden">
+      <label for="adminGeneratedCode">New activation code</label>
+      <input id="adminGeneratedCode" type="text" readonly autocomplete="off" spellcheck="false">
+      <button id="copyActivationButton" type="button" class="secondary">Copy code</button>
+    </div>
+    <h3>Code History</h3>
+    <label for="codeOwnerFilter">Show codes</label>
+    <select id="codeOwnerFilter">
+      <option value="admin">Super Admin codes</option>
+      <option value="reseller">Reseller codes</option>
+      <option value="all">All codes</option>
+    </select>
+    <button id="refreshCodesButton" type="button" class="secondary">Refresh codes</button>
+    <p><small>Latest 100 codes for the selected view. Unused codes start their validity when activated.</small></p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Code</th><th>Type</th><th>Status</th><th>Owner</th><th>Created</th><th>Activated</th><th>Expires</th></tr></thead>
+      <tbody id="activationRows"></tbody>
+    </table></div>
+  </section>
+
   <p id="message" role="status"></p>
 
   </main>
@@ -199,7 +227,7 @@ let busy = false;
 
 function setBusy(value) {
   busy = value;
-  ["loginButton", "refreshButton", "addButton", "removeButton"]
+  ["loginButton", "refreshButton", "addButton", "removeButton", "createResellerButton", "historyButton", "logoutButton", "generateTestButton", "generateYearlyButton", "generateLifetimeButton", "refreshCodesButton", "codeOwnerFilter"]
     .forEach(id => $(id).disabled = value);
 }
 
@@ -232,7 +260,7 @@ async function apiRequest(action, extra = {}) {
     }
   );
 
-  const result = await response.json();
+  const result = await response.json().catch(() => ({}));
 
   if (!response.ok || !result.success) {
     throw new Error(result.error || "Request failed");
@@ -468,6 +496,77 @@ $("historyButton").addEventListener("click", async () => {
 });
 
 
+
+function codeStatus(code) {
+  if (!code.is_used) return "Not activated";
+  if (code.expires_at && new Date(code.expires_at).getTime() <= Date.now()) return "Expired";
+  return "Activated";
+}
+
+async function loadActivationCodes() {
+  const owner = $("codeOwnerFilter").value;
+  const result = await apiRequest("list_activation_codes", { owner });
+  if (!Array.isArray(result.codes)) throw new Error("Invalid code history response");
+  $("activationRows").replaceChildren();
+  const date = value => value ? new Date(value).toLocaleString() : "—";
+  const resellerNames = Object.fromEntries(Array.from($("resellerSelect").options, option => [option.value, option.textContent.split(" — ")[0]]));
+  for (const code of result.codes) {
+    const tr = document.createElement("tr");
+    const values = [code.activation_code, (code.code_type || "unknown").toUpperCase(), codeStatus(code),
+      code.reseller_id ? (resellerNames[code.reseller_id] || "Reseller") : "Super Admin",
+      date(code.created_at), date(code.activated_at), code.expires_at ? date(code.expires_at) : (code.code_type === "lifetime" ? "No expiry" : "Starts on activation")];
+    for (const value of values) {
+      const td = document.createElement("td"); td.textContent = value; tr.appendChild(td);
+    }
+    $("activationRows").appendChild(tr);
+  }
+  if (result.codes.length === 0) {
+    const tr = document.createElement("tr"); const td = document.createElement("td");
+    td.colSpan = 7; td.textContent = "No activation codes yet."; tr.appendChild(td); $("activationRows").appendChild(tr);
+  }
+}
+
+async function generateAdminCode(codeType) {
+  if (busy) return;
+  const labels = { test: "TEST 24 hours", yearly: "YEARLY 365 days", lifetime: "LIFETIME" };
+  if (!labels[codeType]) return;
+  if (!confirm("Create " + labels[codeType] + " activation code?")) return;
+  setBusy(true);
+  $("codeMessage").textContent = "Generating code…";
+  $("generatedCodeArea").classList.add("hidden");
+  $("adminGeneratedCode").value = "";
+  try {
+    const result = await apiRequest("generate_activation_code", { code_type: codeType });
+    if (typeof result.code?.activation_code !== "string" || !result.code.activation_code) throw new Error("No code returned");
+    $("adminGeneratedCode").value = result.code.activation_code;
+    $("generatedCodeArea").classList.remove("hidden");
+    $("codeMessage").textContent = labels[codeType] + " code created. Copy or save it.";
+    $("codeOwnerFilter").value = "admin";
+    try { await loadActivationCodes(); } catch (error) { $("codeMessage").textContent += " History refresh failed; the generated code above is saved."; }
+  } catch (error) {
+    $("codeMessage").textContent = error.message + " Check history before retrying if the request was interrupted.";
+  } finally { setBusy(false); }
+}
+
+$("generateTestButton").addEventListener("click", () => generateAdminCode("test"));
+$("generateYearlyButton").addEventListener("click", () => generateAdminCode("yearly"));
+$("generateLifetimeButton").addEventListener("click", () => generateAdminCode("lifetime"));
+async function refreshActivationCodes() {
+  if (busy) return;
+  setBusy(true);
+  try { await loadActivationCodes(); $("codeMessage").textContent = "Code history updated."; }
+  catch (error) { $("codeMessage").textContent = error.message; }
+  finally { setBusy(false); }
+}
+$("refreshCodesButton").addEventListener("click", refreshActivationCodes);
+$("codeOwnerFilter").addEventListener("change", refreshActivationCodes);
+$("copyActivationButton").addEventListener("click", async () => {
+  const value = $("adminGeneratedCode").value;
+  if (!value) return;
+  try { await navigator.clipboard.writeText(value); $("codeMessage").textContent = "Code copied."; }
+  catch { $("adminGeneratedCode").select(); $("codeMessage").textContent = "Select and copy the code manually."; }
+});
+
 const originalShowDashboard = showDashboard;
 const originalShowLogin = showLogin;
 
@@ -475,6 +574,8 @@ showDashboard = function() {
   originalShowDashboard();
   $("createResellerSection").classList.remove("hidden");
   $("historySection").classList.remove("hidden");
+  $("activationSection").classList.remove("hidden");
+  loadActivationCodes().catch(error => { $("codeMessage").textContent = error.message; });
   loadCreditHistory().catch(error => message(error.message));
 };
 
@@ -482,6 +583,11 @@ showLogin = function() {
   originalShowLogin();
   $("createResellerSection").classList.add("hidden");
   $("historySection").classList.add("hidden");
+  $("activationSection").classList.add("hidden");
+  $("generatedCodeArea").classList.add("hidden");
+  $("adminGeneratedCode").value = "";
+  $("activationRows").replaceChildren();
+  $("codeMessage").textContent = "";
 };
 
 
@@ -512,3 +618,5 @@ $("logoutButton").addEventListener("click", async () => {
 </script>
 </body>
 </html>
+
+
