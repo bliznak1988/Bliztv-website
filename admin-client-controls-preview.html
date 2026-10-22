@@ -620,7 +620,16 @@ function setArchiveView(archive) {
   $("archiveSearch").classList.toggle("hidden", !archive);
   loadActivationCodes().catch(error => { $("codeMessage").textContent = error.message; });
 }
-function syncArchiveHash(){ if(location.hash === "#expiredTestsArchive") setArchiveView(true); }
+function syncArchiveHash(){
+ if(location.hash === "#expiredTestsArchive" || new URLSearchParams(location.search).get("view")==="expired-tests"){
+   setArchiveView(true);
+   const showArchive = () => {
+     const target=$("expiredTestsArchive");
+     if(target) target.scrollIntoView({block:"start",behavior:"instant"});
+   };
+   requestAnimationFrame(showArchive);
+ }
+}
 window.addEventListener("hashchange", syncArchiveHash);
 $("activeCodesTab").addEventListener("click", () => setArchiveView(false));
 $("expiredTestsTab").addEventListener("click", () => setArchiveView(true));
