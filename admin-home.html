@@ -16,12 +16,12 @@ function openSection(section){
  el("workspace").classList.add("visible");
  el("workspaceTitle").textContent=sections[section];
  const frame=el("managementFrame");
- const url="admin-client-controls-preview.html#"+section;
- if(section==="expiredTestsArchive"){
-  frame.setAttribute("src","admin-client-controls-preview.html?view=expired-tests#expiredTestsArchive");
-}else if(frame.getAttribute("src")!==url){
-  frame.setAttribute("src",url);
-}
+ const url="admin-client-controls-preview.html"+(section==="expiredTestsArchive"?"?view=expired-tests#expiredTestsArchive":"#"+section);
+ if(frame.getAttribute("src")!==url){
+   frame.setAttribute("src",url);
+ }else if(section==="expiredTestsArchive"){
+   frame.contentWindow?.postMessage({type:"BLIZ_OPEN_EXPIRED_ARCHIVE"},location.origin);
+ }
  document.querySelectorAll(".nav a").forEach(a=>{a.classList.toggle("selected",a.hash==="#"+section);a.removeAttribute("aria-current");if(a.hash==="#"+section)a.setAttribute("aria-current","page");});
  history.replaceState(null,"","#"+section);
  window.scrollTo(0,0);
