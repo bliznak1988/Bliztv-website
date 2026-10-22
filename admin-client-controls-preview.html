@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLiZ TV | Super Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #061321;
+  color: white;
+}
+header {
+  background: #0b2237;
+  border-bottom: 1px solid #23445c;
+  padding: 22px;
+}
+h1 { color: #70ff52; margin: 0; }
+main { max-width: 1100px; margin: auto; padding: 24px; }
+.card {
+  background: #10283e;
+  border: 1px solid #254761;
+  padding: 22px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+}
+input, select {
+  width: 100%;
+  padding: 13px;
+  margin: 8px 0;
+  border: 1px solid #35536d;
+  border-radius: 8px;
+  font-size: 15px;
+}
+button {
+  padding: 12px 15px;
+  border: 0;
+  border-radius: 8px;
+  background: #65ed4b;
+  color: #062010;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 5px 5px 5px 0;
+}
+button:disabled { opacity: .5; cursor: not-allowed; }
+.secondary { background: #29465d; color: white; }
+.danger { background: #e96c6c; color: #270909; }
+.hidden { display: none; }
+#message { margin: 12px 0; color: #ffb3b3; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td {
+  padding: 14px;
+  border-bottom: 1px solid #29465d;
+  text-align: left;
+}
+th { color: #8fdcff; }
+.active { color: #76ff70; }
+.inactive { color: #ff8888; }
+.stats { font-size: 26px; font-weight: bold; color: #70ff52; }
+label { display: block; margin-top: 12px; }
+small { color: #a5b9cd; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>BLiZ TV</h1>
+  <small>SUPER ADMIN DASHBOARD</small>
+</header>
+
+<main>
+  <section id="loginBox" class="card">
+    <h2>Admin Login</h2>
+    <input id="email" type="email" placeholder="Admin email">
+    <input id="password" type="password" placeholder="Password">
+    <button id="loginButton">Login</button>
+  </section>
+
+  <section id="dashboard" class="hidden">
+    <div class="card">
+      <h2>Reseller Management</h2>
+      <p>Total Resellers</p>
+      <div id="totalResellers" class="stats">0</div>
+      <button id="refreshButton">Refresh</button>
+      <button id="logoutButton" class="secondary">Logout</button>
+    </div>
+
+
+    <div class="card" id="iptvTrialSection">
+      <h2>IPTV Trial</h2>
+      <p><small>Generate a 24-hour IPTV playlist trial. This is separate from device activation TEST codes.</small></p>
+      <label for="trialNote">Notes — client name</label>
+      <input id="trialNote" type="text" maxlength="150" placeholder="Example: Marko - Telegram">
+      <button id="trialButton" type="button">Generate IPTV Trial</button>
+      <p id="trialMessage" role="status" aria-live="polite"></p>
+      <div id="trialDetails" class="hidden">
+        <p>Username: <strong id="trialUsername"></strong></p>
+        <p>Password: <strong id="trialPassword"></strong></p>
+        <label for="trialM3u">M3U URL</label>
+        <input id="trialM3u" type="text" readonly>
+        <button id="copyTrialButton" type="button" class="secondary">Copy Trial Details</button>
+      </div>
+    </div>
+    <div class="card table-wrap">
+      <h3>All Resellers</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Reseller</th>
+            <th>Credits</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody id="resellerRows"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Manage Credits</h2>
+
+      <label for="resellerSelect">Select Reseller</label>
+      <select id="resellerSelect"></select>
+
+      <label for="amount">Number of Credits</label>
+      <input id="amount" type="number" min="1" max="100000"
+             step="1" placeholder="Example: 10">
+
+      <label for="reason">Reason</label>
+      <input id="reason" type="text" maxlength="200"
+             placeholder="Example: Payment received">
+
+      <button id="addButton">+ Add Credits</button>
+      <button id="removeButton" class="danger">- Remove Credits</button>
+
+      <p><small>Every change is recorded in Supabase credit history.</small></p>
+    </div>
+  </section>
+  <section id="createResellerSection" class="card hidden">
+  <h2>➕ Create New Reseller</h2>
+
+  <label for="newResellerName">Reseller Name</label>
+  <input
+    id="newResellerName"
+    type="text"
+    placeholder="Enter reseller name"
+    maxlength="100"
+  >
+
+  <label for="newResellerEmail">Email Address</label>
+  <input
+    id="newResellerEmail"
+    type="email"
+    placeholder="reseller@example.com"
+  >
+
+  <button id="createResellerButton" type="button">
+    Create Reseller &amp; Send Invitation
+  </button>
+
+  <p><small>
+    The reseller will receive an email invitation
+    to set their password. Starting balance: 0 credits.
+  </small></p>
+</section>
+  
+<section id="historySection" class="card hidden">
+  <h2>Credit History</h2>
+  <button id="historyButton">Refresh History</button>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Reseller</th>
+          <th>Amount</th>
+          <th>Reason</th>
+          <th>Activation Code</th>
+        </tr>
+      </thead>
+      <tbody id="historyRows"></tbody>
+    </table>
+  </div>
+</section>
+
+
+  <section id="activationSection" class="card hidden">
+    <h2>Activation Codes</h2>
+    <p>Create codes directly as Super Admin. No reseller credits or daily TEST limit.</p>
+    <p><small>Validity begins at first activation: TEST 24 hours, YEARLY 365 days, LIFETIME no expiry. TEST remains one trial per device.</small></p>
+    <button id="generateTestButton" type="button">Generate TEST · 24 hours</button>
+    <button id="generateYearlyButton" type="button">Generate YEARLY · 365 days</button>
+    <button id="generateLifetimeButton" type="button">Generate LIFETIME</button>
+    <p id="codeMessage" role="status" aria-live="polite"></p>
+    <div id="generatedCodeArea" class="hidden">
+      <label for="adminGeneratedCode">New activation code</label>
+      <input id="adminGeneratedCode" type="text" readonly autocomplete="off" spellcheck="false">
+      <button id="copyActivationButton" type="button" class="secondary">Copy code</button>
+    </div>
+    <h3>Code History &amp; Client Management</h3>\n    <p><small>PAUSE updates the database only. APK kick-out requires a separate app update.</small></p>
+    <label for="codeOwnerFilter">Show codes</label>
+    <select id="codeOwnerFilter">
+      <option value="admin">Super Admin codes</option>
+      <option value="reseller">Reseller codes</option>
+      <option value="all">All codes</option>
+    </select>
+    <button id="refreshCodesButton" type="button" class="secondary">Refresh codes</button>
+    <p><small>Latest 100 codes for the selected view. Unused codes start their validity when activated.</small></p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Code</th><th>Type</th><th>Status</th><th>Owner</th><th>Created</th><th>Activated</th><th>Expires</th><th>Client name</th><th>Note</th><th>Controls</th></tr></thead>
+      <tbody id="activationRows"></tbody>
+    </table></div>
+  </section>
+
+  <p id="message" role="status"></p>
+
+  </main>
+
+<script>
+const SUPABASE_URL =
+  "https://noyvamodeyshwnpssvpf.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_dyPJYKKpprqYXdjWnhl6wQ_bz9eVrwx";
+
+const ADMIN_ID =
+  "a1388d57-c60b-4ab1-bf8a-44f03cd6d47e";
+
+const client = window.supabase.createClient(
+  SUPABASE_URL, SUPABASE_KEY
+);
+
+const $ = id => document.getElementById(id);
+const message = text => { $("message").textContent = text; };
+
+let busy = false;
+
+function setBusy(value) {
+  busy = value;
+  ["loginButton", "refreshButton", "addButton", "removeButton", "createResellerButton", "historyButton", "logoutButton", "generateTestButton", "generateYearlyButton", "generateLifetimeButton", "refreshCodesButton", "codeOwnerFilter"]
+    .forEach(id => $(id).disabled = value);
+}
+
+function showLogin() {
+  $("loginBox").classList.remove("hidden");
+  $("dashboard").classList.add("hidden");
+}
+
+function showDashboard() {
+  $("loginBox").classList.add("hidden");
+  $("dashboard").classList.remove("hidden");
+}
+
+async function apiRequest(action, extra = {}) {
+  const { data: sessionData } = await client.auth.getSession();
+  const token = sessionData.session?.access_token;
+
+  if (!token) throw new Error("Please login again.");
+
+  const response = await fetch(
+    SUPABASE_URL + "/functions/v1/bliztv-super-admin",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({ action, ...extra })
+    }
+  );
+
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.error || "Request failed");
+  }
+
+  return result;
+}
+
+async function loadResellers() {
+  const result = await apiRequest("list_resellers");
+  const resellers = result.resellers || [];
+
+  $("totalResellers").textContent = resellers.length;
+  $("resellerRows").replaceChildren();
+
+  const selected = $("resellerSelect").value;
+  $("resellerSelect").replaceChildren();
+
+  for (const reseller of resellers) {
+    const tr = document.createElement("tr");
+    const values = [
+      reseller.reseller_name || "Unnamed",
+      String(reseller.credits),
+      reseller.is_active ? "Active" : "Inactive",
+      new Date(reseller.created_at).toLocaleDateString()
+    ];
+
+    values.forEach((value, index) => {
+      const td = document.createElement("td");
+      td.textContent = value;
+      if (index === 2) {
+        td.className = reseller.is_active ? "active" : "inactive";
+      }
+      tr.appendChild(td);
+    });
+
+    $("resellerRows").appendChild(tr);
+
+    const option = document.createElement("option");
+    option.value = reseller.id;
+    option.textContent =
+      (reseller.reseller_name || "Unnamed") +
+      " — " + reseller.credits + " credits";
+    $("resellerSelect").appendChild(option);
+  }
+
+  if (resellers.some(r => r.id === selected)) {
+    $("resellerSelect").value = selected;
+  }
+}
+
+async function login() {
+  if (busy) return;
+  setBusy(true);
+  message("");
+
+  try {
+    const { data, error } = await client.auth.signInWithPassword({
+      email: $("email").value.trim(),
+      password: $("password").value
+    });
+
+    if (error) throw error;
+
+    if (data.user?.id !== ADMIN_ID) {
+      await client.auth.signOut();
+      throw new Error("Access denied");
+    }
+
+    await loadResellers();
+    showDashboard();
+  } catch (error) {
+    showLogin();
+    message(error.message);
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function adjustCredits(direction) {
+  if (busy) return;
+
+  const resellerId = $("resellerSelect").value;
+  const rawAmount = $("amount").value.trim();
+  const quantity = Number(rawAmount);
+  const reason = $("reason").value.trim();
+
+  if (
+    !resellerId ||
+    !/^[1-9]\d*$/.test(rawAmount) ||
+    !Number.isSafeInteger(quantity) ||
+    quantity > 100000 ||
+    reason.length < 3 ||
+    reason.length > 200
+  ) {
+    message("Select a reseller, enter valid credits and a reason.");
+    return;
+  }
+
+  const amount = direction * quantity;
+  const selectedName =
+    $("resellerSelect").selectedOptions[0]?.textContent || "Reseller";
+
+  const confirmed = confirm(
+    (amount > 0 ? "ADD " : "REMOVE ") +
+    quantity + " credits for " + selectedName + "?"
+  );
+
+  if (!confirmed) return;
+
+  setBusy(true);
+  message("");
+
+  try {
+    const result = await apiRequest("adjust_credits", {
+      reseller_id: resellerId,
+      amount,
+      reason
+    });
+
+    message("Success! New balance: " + result.credits);
+    $("amount").value = "";
+    $("reason").value = "";
+
+    await loadResellers();
+  } catch (error) {
+    message(
+      error.message +
+      " If the request was interrupted, refresh and check balance before retrying."
+    );
+  } finally {
+    setBusy(false);
+  }
+}
+
+$("loginButton").addEventListener("click", login);
+
+$("refreshButton").addEventListener("click", async () => {
+  if (busy) return;
+  setBusy(true);
+  try {
+    await loadResellers();
+    message("Resellers updated.");
+  } catch (error) {
+    message(error.message);
+  } finally {
+    setBusy(false);
+  }
+});
+  $("createResellerButton").addEventListener("click", async () => {
+  const resellerName = $("newResellerName").value.trim();
+  const email = $("newResellerEmail").value.trim();
+
+  if (!resellerName || !email) {
+    message("Enter reseller name and email.");
+    return;
+  }
+
+  if (!confirm(`Create reseller and send invitation to ${email}?`)) {
+    return;
+  }
+
+  const button = $("createResellerButton");
+  button.disabled = true;
+
+  try {
+    const result = await apiRequest("create_reseller", {
+      reseller_name: resellerName,
+      email: email
+    });
+
+    $("newResellerName").value = "";
+    $("newResellerEmail").value = "";
+
+    await loadResellers();
+
+    message("Reseller created! Invitation sent to " + email);
+  } catch (error) {
+    message(error.message || "Could not create reseller.");
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$("addButton").addEventListener("click", () => adjustCredits(1));
+  
+async function loadCreditHistory() {
+  const result = await apiRequest("list_credit_history");
+
+  const resellerNames = {};
+
+  for (const option of $("resellerSelect").options) {
+    resellerNames[option.value] =
+      option.textContent.split(" — ")[0];
+  }
+
+  $("historyRows").replaceChildren();
+
+  for (const entry of result.history || []) {
+    const tr = document.createElement("tr");
+
+    const values = [
+      new Date(entry.created_at).toLocaleString(),
+      resellerNames[entry.reseller_id] || "Unknown reseller",
+      entry.amount > 0 ? "+" + entry.amount : String(entry.amount),
+      entry.reason || "—",
+      entry.activation_code || "—"
+    ];
+
+    for (const value of values) {
+      const td = document.createElement("td");
+      td.textContent = value;
+      tr.appendChild(td);
+    }
+
+    $("historyRows").appendChild(tr);
+  }
+}
+
+$("historyButton").addEventListener("click", async () => {
+  if (busy) return;
+
+  setBusy(true);
+
+  try {
+    await loadCreditHistory();
+    message("Credit history updated.");
+  } catch (error) {
+    message(error.message);
+  } finally {
+    setBusy(false);
+  }
+});
+
+
+
+function codeStatus(code) {
+  if (!code.is_used) return "Not activated";
+  if (code.expires_at && new Date(code.expires_at).getTime() <= Date.now()) return "Expired";
+  return "Activated";
+}
+
+async function loadActivationCodes() {
+  const owner = $("codeOwnerFilter").value;
+  const result = await apiRequest("list_activation_codes", { owner });
+  if (!Array.isArray(result.codes)) throw new Error("Invalid code history response");
+  $("activationRows").replaceChildren();
+  const date = value => value ? new Date(value).toLocaleString() : "—";
+  const resellerNames = Object.fromEntries(Array.from($("resellerSelect").options, option => [option.value, option.textContent.split(" — ")[0]]));
+  for (const code of result.codes) {
+    const tr = document.createElement("tr");
+    const values = [code.activation_code, (code.code_type || "unknown").toUpperCase(), codeStatus(code),
+      code.reseller_id ? (resellerNames[code.reseller_id] || "Reseller") : "Super Admin",
+      date(code.created_at), date(code.activated_at), code.expires_at ? date(code.expires_at) : (code.code_type === "lifetime" ? "No expiry" : "Starts on activation")];
+    for (const value of values) {
+      const td = document.createElement("td"); td.textContent = value; tr.appendChild(td);
+    }
+    const nameTd = document.createElement("td");
+    const nameInput = document.createElement("input"); nameInput.type = "text"; nameInput.maxLength = 120; nameInput.placeholder = "Client name"; nameInput.value = code.customer_name || ""; nameInput.style.minWidth = "140px"; nameTd.appendChild(nameInput); tr.appendChild(nameTd);
+    const noteTd = document.createElement("td");
+    const noteInput = document.createElement("input"); noteInput.type = "text"; noteInput.maxLength = 1000; noteInput.placeholder = "Private note"; noteInput.value = code.admin_note || ""; noteInput.style.minWidth = "170px"; noteTd.appendChild(noteInput); tr.appendChild(noteTd);
+    const controlTd = document.createElement("td");
+    const save = document.createElement("button"); save.type = "button"; save.textContent = "Save"; save.className = "secondary";
+    const toggle = document.createElement("button"); toggle.type = "button"; toggle.textContent = code.is_paused ? "RESUME" : "PAUSE"; toggle.style.marginLeft = "6px";
+    const feedback = document.createElement("small"); feedback.style.display = "block"; feedback.setAttribute("role","status");
+    const apply = async (action, extra) => {
+      if (busy) return;
+      save.disabled = true; toggle.disabled = true; feedback.textContent = "Saving…";
+      try {
+        const response = await apiRequest(action, { code_id: code.id, ...extra });
+        code.customer_name = response.client.customer_name; code.admin_note = response.client.admin_note; code.is_paused = response.client.is_paused;
+        toggle.textContent = code.is_paused ? "RESUME" : "PAUSE";
+        tr.children[2].textContent = code.is_paused ? "PAUSED" : codeStatus(code);
+        feedback.textContent = "Saved";
+      } catch (error) { feedback.textContent = error.message || "Update failed"; }
+      finally { save.disabled = false; toggle.disabled = false; }
+    };
+    save.addEventListener("click", () => apply("update_client_details", { customer_name: nameInput.value, admin_note: noteInput.value }));
+    toggle.addEventListener("click", () => {
+      const next = code.is_paused ? "resume_client" : "pause_client";
+      if (confirm((code.is_paused ? "Resume" : "Pause") + " activation " + code.activation_code + "?")) apply(next, {});
+    });
+    controlTd.append(save, toggle, feedback); tr.appendChild(controlTd);
+    $("activationRows").appendChild(tr);
+  }
+  if (result.codes.length === 0) {
+    const tr = document.createElement("tr"); const td = document.createElement("td");
+    td.colSpan = 10; td.textContent = "No activation codes yet."; tr.appendChild(td); $("activationRows").appendChild(tr);
+  }
+}
+
+async function generateAdminCode(codeType) {
+  if (busy) return;
+  const labels = { test: "TEST 24 hours", yearly: "YEARLY 365 days", lifetime: "LIFETIME" };
+  if (!labels[codeType]) return;
+  if (!confirm("Create " + labels[codeType] + " activation code?")) return;
+  setBusy(true);
+  $("codeMessage").textContent = "Generating code…";
+  $("generatedCodeArea").classList.add("hidden");
+  $("adminGeneratedCode").value = "";
+  try {
+    const result = await apiRequest("generate_activation_code", { code_type: codeType });
+    if (typeof result.code?.activation_code !== "string" || !result.code.activation_code) throw new Error("No code returned");
+    $("adminGeneratedCode").value = result.code.activation_code;
+    $("generatedCodeArea").classList.remove("hidden");
+    $("codeMessage").textContent = labels[codeType] + " code created. Copy or save it.";
+    $("codeOwnerFilter").value = "admin";
+    try { await loadActivationCodes(); } catch (error) { $("codeMessage").textContent += " History refresh failed; the generated code above is saved."; }
+  } catch (error) {
+    $("codeMessage").textContent = error.message + " Check history before retrying if the request was interrupted.";
+  } finally { setBusy(false); }
+}
+
+$("generateTestButton").addEventListener("click", () => generateAdminCode("test"));
+$("generateYearlyButton").addEventListener("click", () => generateAdminCode("yearly"));
+$("generateLifetimeButton").addEventListener("click", () => generateAdminCode("lifetime"));
+async function refreshActivationCodes() {
+  if (busy) return;
+  setBusy(true);
+  try { await loadActivationCodes(); $("codeMessage").textContent = "Code history updated."; }
+  catch (error) { $("codeMessage").textContent = error.message; }
+  finally { setBusy(false); }
+}
+$("refreshCodesButton").addEventListener("click", refreshActivationCodes);
+$("codeOwnerFilter").addEventListener("change", refreshActivationCodes);
+$("copyActivationButton").addEventListener("click", async () => {
+  const value = $("adminGeneratedCode").value;
+  if (!value) return;
+  try { await navigator.clipboard.writeText(value); $("codeMessage").textContent = "Code copied."; }
+  catch { $("adminGeneratedCode").select(); $("codeMessage").textContent = "Select and copy the code manually."; }
+});
+
+
+async function generateIptvTrial() {
+  if (busy) return;
+  const button = $("trialButton");
+  button.disabled = true;
+  $("trialDetails").classList.add("hidden");
+  $("trialMessage").textContent = "Creating IPTV trial...";
+  try {
+    const { data: sessionData, error: sessionError } = await client.auth.getSession();
+    if (sessionError || sessionData.session?.user?.id !== ADMIN_ID) throw new Error("Please sign in as Super Admin.");
+    const { data, error } = await client.functions.invoke("bliztv-generate-trial", { body: { note: $("trialNote").value.trim() } });
+    if (error || !data?.success || !data?.m3u_url) throw new Error(data?.error || error?.message || "Could not create IPTV trial.");
+    $("trialUsername").textContent = data.username || "Not provided";
+    $("trialPassword").textContent = data.password || "Not provided";
+    $("trialM3u").value = data.m3u_url;
+    $("trialDetails").classList.remove("hidden");
+    $("trialMessage").textContent = "IPTV trial created successfully.";
+  } catch (error) {
+    $("trialMessage").textContent = error.message || "Could not create IPTV trial.";
+  } finally { button.disabled = false; }
+}
+$("trialButton").addEventListener("click", generateIptvTrial);
+$("copyTrialButton").addEventListener("click", async () => {
+  const details = "BLiZ TV — IPTV Trial\\nUsername: " + $("trialUsername").textContent + "\\nPassword: " + $("trialPassword").textContent + "\\nM3U URL: " + $("trialM3u").value;
+  try { await navigator.clipboard.writeText(details); $("trialMessage").textContent = "Trial details copied."; }
+  catch { $("trialM3u").select(); $("trialMessage").textContent = "Select and copy the M3U URL manually."; }
+});
+
+const originalShowDashboard = showDashboard;
+const originalShowLogin = showLogin;
+
+showDashboard = function() {
+  originalShowDashboard();
+  $("createResellerSection").classList.remove("hidden");
+  $("historySection").classList.remove("hidden");
+  $("activationSection").classList.remove("hidden");
+  loadActivationCodes().catch(error => { $("codeMessage").textContent = error.message; });
+  loadCreditHistory().catch(error => message(error.message));
+};
+
+showLogin = function() {
+  originalShowLogin();
+  $("createResellerSection").classList.add("hidden");
+  $("historySection").classList.add("hidden");
+  $("activationSection").classList.add("hidden");
+  $("generatedCodeArea").classList.add("hidden");
+  $("adminGeneratedCode").value = "";
+  $("activationRows").replaceChildren();
+  $("codeMessage").textContent = "";
+};
+
+
+$("removeButton").addEventListener("click", () => adjustCredits(-1));
+
+$("logoutButton").addEventListener("click", async () => {
+  await client.auth.signOut();
+  showLogin();
+  message("Logged out.");
+});
+
+(async () => {
+  const { data: { user } } = await client.auth.getUser();
+
+  if (user?.id !== ADMIN_ID) {
+    showLogin();
+    return;
+  }
+
+  try {
+    await loadResellers();
+    showDashboard();
+  } catch (error) {
+    showLogin();
+    message(error.message);
+  }
+})();
+</script>
+</body>
+</html>
+
+
