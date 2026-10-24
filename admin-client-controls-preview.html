@@ -101,13 +101,14 @@ th, td { padding: 10px 12px; vertical-align: middle; white-space: nowrap; }
 .activation-actions button{margin:0}
 .activation-actions small{width:100%}
 @media(max-width:550px){.activation-fields{grid-template-columns:1fr}.activation-details{grid-template-columns:1fr 1fr}}
-body{background:linear-gradient(135deg,#f5fff2,#eaffdf,#f9fff6);color:#173426;font-family:Inter,system-ui,Arial,sans-serif}header{background:#efffeb;border-color:#c7e8bd;display:flex;align-items:center;gap:20px;flex-wrap:wrap}header h1{color:#236c39}header small{color:#4e7755}.card,.activation-card{background:#fff;border:1px solid #beddb7;color:#173426;box-shadow:0 5px 20px #1d51200a}h2,h3{color:#225c32}small,.activation-details small{color:#66806a}th{color:#326c42}th,td,.activation-top{border-color:#d5e9d0}.stats{color:#2b8c43}button{background:#3e9e51;color:white}.secondary{background:#dcefd8;color:#245d31}.danger{background:#f9d3d0;color:#7b2525}.activation-card{background:#fafff8}.active{color:#1e8c40}.inactive{color:#bc4b4b}input,select,textarea{background:white;color:#193926;border:1px solid #b5d1b0}#message{color:#ad3535}.supernav{display:flex;gap:9px;flex-wrap:wrap;margin-left:auto}.supernav a{background:#e0f5db;color:#215c31;border:1px solid #c3e2bd;border-radius:10px;padding:10px 13px;text-decoration:none;font-weight:650;font-size:13px}.supernav a:hover{background:#c9edc2}section[id],#clientSection{scroll-margin-top:16px}@media(min-width:1050px){#dashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}#dashboard.hidden{display:none}#dashboard>.card{margin:0;min-width:0}#dashboard>.table-wrap{overflow-x:auto}#dashboard table{min-width:0}#dashboard th,#dashboard td{white-space:normal;overflow-wrap:anywhere}#createResellerSection,#historySection,#activationSection{width:100%;max-width:none}main{width:100%;max-width:none;padding:20px clamp(16px,2vw,36px)}.activation-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(min-width:1450px){#dashboard{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:1049px){#dashboard{display:block}}.archive-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}.archive-tools button{margin:0}.archive-tools button.current{background:#22763a;color:white}.archive-tools input{flex:1;min-width:220px;margin:0}.archive-hint{color:#58775e;font-size:13px}</style>
+body{background:linear-gradient(135deg,#f5fff2,#eaffdf,#f9fff6);color:#173426;font-family:Inter,system-ui,Arial,sans-serif}header{background:#efffeb;border-color:#c7e8bd;display:flex;align-items:center;gap:20px;flex-wrap:wrap}header h1{color:#236c39}header small{color:#4e7755}.card,.activation-card{background:#fff;border:1px solid #beddb7;color:#173426;box-shadow:0 5px 20px #1d51200a}h2,h3{color:#225c32}small,.activation-details small{color:#66806a}th{color:#326c42}th,td,.activation-top{border-color:#d5e9d0}.stats{color:#2b8c43}button{background:#3e9e51;color:white}.secondary{background:#dcefd8;color:#245d31}.danger{background:#f9d3d0;color:#7b2525}.activation-card{background:#fafff8}.active{color:#1e8c40}.inactive{color:#bc4b4b}input,select,textarea{background:white;color:#193926;border:1px solid #b5d1b0}#message{color:#ad3535}.supernav{display:flex;gap:9px;flex-wrap:wrap;margin-left:auto}.supernav a{background:#e0f5db;color:#215c31;border:1px solid #c3e2bd;border-radius:10px;padding:10px 13px;text-decoration:none;font-weight:650;font-size:13px}.supernav a:hover{background:#c9edc2}section[id],#clientSection{scroll-margin-top:16px}@media(min-width:1050px){#dashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}#dashboard.hidden{display:none}#dashboard>.card{margin:0;min-width:0}#dashboard>.table-wrap{overflow-x:auto}#dashboard table{min-width:0}#dashboard th,#dashboard td{white-space:normal;overflow-wrap:anywhere}#createResellerSection,#historySection,#activationSection{width:100%;max-width:none}main{width:100%;max-width:none;padding:20px clamp(16px,2vw,36px)}.activation-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(min-width:1450px){#dashboard{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:1049px){#dashboard{display:block}}.archive-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}.archive-tools button{margin:0}.archive-tools button.current{background:#22763a;color:white}.archive-tools input{flex:1;min-width:220px;margin:0}.archive-hint{color:#58775e;font-size:13px}.mac-check input{width:auto;margin-right:8px}.mac-device-table{max-height:520px;overflow:auto}#macMessage{color:#245d31}#macDeviceForm{margin:18px 0;padding:18px;border:1px solid #b8ddb1;border-radius:12px}.embedded-admin header{display:none}.embedded-admin main{padding:14px}.embedded-admin #macActivationSection{scroll-margin-top:14px}
+</style>
 </head>
 <body>
 
 <header>
   <h1>BLiZ TV</h1>
-  <small>SUPER ADMIN DASHBOARD</small><nav class="supernav"><a href="admin-home.html">⌂ Dashboard</a><a href="#activationSection">🔑 Activation Codes / Clients</a><a href="#resellersSection">🤝 Resellers</a><a href="#creditsSection">💳 Credits</a><a href="#iptvTrialSection">📺 IPTV Trials</a><a href="#historySection">📋 History</a></nav>
+  <small>SUPER ADMIN DASHBOARD</small><nav class="supernav"><a href="admin-home.html">⌂ Dashboard</a><a href="#activationSection">🔑 Activation Codes / Clients</a><a href="#macActivationSection">▣ MAC Activation</a><a href="#resellersSection">🤝 Resellers</a><a href="#creditsSection">💳 Credits</a><a href="#iptvTrialSection">📺 IPTV Trials</a><a href="#historySection">📋 History</a></nav>
 </header>
 
 <main>
@@ -124,6 +125,7 @@ body{background:linear-gradient(135deg,#f5fff2,#eaffdf,#f9fff6);color:#173426;fo
       <p>Total Resellers</p>
       <div id="totalResellers" class="stats">0</div>
       <button id="refreshButton">Refresh</button>
+      <button id="openMacSectionButton" class="secondary" type="button">MAC Activation</button>
       <button id="logoutButton" class="secondary">Logout</button>
     </div>
 
@@ -250,6 +252,61 @@ body{background:linear-gradient(135deg,#f5fff2,#eaffdf,#f9fff6);color:#173426;fo
     <button id="refreshCodesButton" type="button" class="secondary">Refresh codes</button>
     <p><small>Latest 100 codes for the selected view. Expired 24-hour TEST codes are hidden automatically on refresh; records remain in Supabase. Unused codes start their validity when activated.</small></p>
     <div id="expiredTestsArchive" class="archive-tools"><button id="activeCodesTab" type="button" class="current">📋 Active / Pending</button><button id="expiredTestsTab" type="button" class="secondary">📁 Expired TEST Archive</button><input id="archiveSearch" type="search" placeholder="Search code, client name or note" aria-label="Search archive" class="hidden"></div><p class="archive-hint" id="archiveHint">Expired 24-hour tests are stored in the archive view automatically.</p><div id="activationCards" class="activation-grid"></div>
+  </section>
+
+  <section id="macActivationSection" class="card hidden">
+    <h2>MAC Activation · LG &amp; Android</h2>
+    <p>Activate a device and assign its playlist directly from Super Admin.</p>
+    <p><small>Open BLiZ TV on the customer's device with internet first. Enter the MAC / ID shown in the app, not the Wi-Fi address from device settings.</small></p>
+    <button id="newMacButton" type="button">+ Add MAC device</button>
+    <button id="refreshMacButton" type="button" class="secondary">Refresh MAC devices</button>
+    <p id="macMessage" role="status" aria-live="polite"></p>
+    <form id="macDeviceForm">
+      <fieldset id="macFields" style="border:0;padding:0;margin:0">
+        <h3 id="macFormTitle">Add MAC device</h3>
+        <label for="macClientName">Client / device name</label>
+        <input id="macClientName" required maxlength="120" placeholder="Example: Marko · Android TV">
+        <label for="macAddress">MAC / ID from BLiZ TV</label>
+        <input id="macAddress" required maxlength="17" pattern="([0-9A-F]{2}:){5}[0-9A-F]{2}" placeholder="02:AB:CD:12:34:56" autocomplete="off" spellcheck="false">
+        <small>Type or paste the address — colons are added automatically.</small>
+        <label class="mac-check"><input id="macAssignSource" type="checkbox" checked> Assign / replace playlist</label>
+        <div id="macSourceFields">
+          <label for="macSourceType">Playlist type</label>
+          <select id="macSourceType"><option value="m3u">M3U playlist</option><option value="xtream">Xtream Codes</option></select>
+          <label id="macSourceUrlLabel" for="macSourceUrl">M3U URL</label>
+          <input id="macSourceUrl" type="url" required maxlength="8192" placeholder="https://provider.example/list.m3u" autocomplete="off">
+          <div id="macXtreamFields" class="hidden">
+            <label for="macSourceUsername">Username</label>
+            <input id="macSourceUsername" maxlength="512" autocomplete="off">
+            <label for="macSourcePassword">Password</label>
+            <input id="macSourcePassword" type="password" maxlength="512" autocomplete="new-password">
+          </div>
+        </div>
+        <p id="macKeepSourceNote" class="hidden"><small>The existing playlist stays unchanged. Tick Assign / replace playlist only when you want to replace it.</small></p>
+        <label for="macValidity">Validity</label>
+        <select id="macValidity">
+          <option value="none">No expiry</option><option value="24h">24 hours · 24 часа</option>
+          <option value="1m">1 month · 1 месец</option><option value="3m">3 months · 3 месеци</option>
+          <option value="6m">6 months · 6 месеци</option><option value="12m">12 months · 12 месеци</option>
+          <option value="custom">Custom date</option>
+        </select>
+        <small>A selected period starts now. Check the expiry date before saving.</small>
+        <label for="macExpires">Valid until</label>
+        <input id="macExpires" type="datetime-local">
+        <label class="mac-check"><input id="macEnabled" type="checkbox" checked> Device active</label>
+        <button id="saveMacButton" type="submit">Activate MAC / Save device</button>
+        <button id="cancelMacButton" type="button" class="secondary">Reset form</button>
+      </fieldset>
+    </form>
+    <h3>MAC devices</h3>
+    <label for="macSearch">Search client or MAC</label>
+    <input id="macSearch" type="search" placeholder="Client name or MAC / ID">
+    <label for="macPlatform">Platform</label>
+    <select id="macPlatform"><option value="all">LG + Android</option><option value="android">Android</option><option value="lg">LG / other</option></select>
+    <div class="table-wrap mac-device-table"><table>
+      <thead><tr><th>Client</th><th>MAC / ID</th><th>Platform</th><th>Playlist</th><th>Status</th><th>Valid until</th><th>Actions</th></tr></thead>
+      <tbody id="macDeviceRows"></tbody>
+    </table></div>
   </section>
 
   <p id="message" role="status"></p>
@@ -714,6 +771,192 @@ $("copyTrialButton").addEventListener("click", async () => {
   catch { $("trialM3u").select(); $("trialMessage").textContent = "Select and copy the M3U URL manually."; }
 });
 
+let macDevices = [];
+let macEditing = null;
+let macBusy = false;
+let macExpiryDirty = false;
+
+function formatMacAddress(value) {
+  return (String(value).replace(/[^a-f0-9]/gi, "").slice(0, 12).toUpperCase().match(/.{1,2}/g) || []).join(":");
+}
+function macLocalDate(value) {
+  if (!value) return "";
+  const d = new Date(value);
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+function macPeriodExpiry(period, now = new Date()) {
+  if (period === "none") return "";
+  const d = new Date(now);
+  if (period === "24h") d.setTime(d.getTime() + 86400000);
+  else {
+    if (!["1m", "3m", "6m", "12m"].includes(period)) throw new Error("Invalid validity period");
+    const day = d.getDate();
+    d.setDate(1); d.setMonth(d.getMonth() + Number(period.slice(0, -1)));
+    d.setDate(Math.min(day, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()));
+  }
+  return macLocalDate(d);
+}
+function macDeviceStatus(device) {
+  if (!device.enabled) return "Paused";
+  if (device.expires_at && Date.parse(device.expires_at) <= Date.now()) return "Expired";
+  return device.has_source ? "Active" : "Waiting for playlist";
+}
+function setMacBusy(value) {
+  macBusy = value;
+  $("macFields").disabled = value;
+  ["newMacButton", "refreshMacButton"].forEach(id => { $(id).disabled = value; });
+  $("macDeviceRows").querySelectorAll("button").forEach(button => { button.disabled = value; });
+}
+async function macRpc(name, params = {}) {
+  const { data, error } = await client.auth.getSession();
+  if (error || data.session?.user?.id !== ADMIN_ID) throw new Error("Please sign in as Super Admin.");
+  const result = await client.rpc(name, params);
+  if (result.error) throw new Error(result.error.message || "MAC activation request failed.");
+  return result.data;
+}
+function updateMacSourceFields() {
+  const assign = $("macAssignSource").checked;
+  const xtream = $("macSourceType").value === "xtream";
+  $("macSourceFields").classList.toggle("hidden", !assign);
+  $("macKeepSourceNote").classList.toggle("hidden", assign);
+  $("macXtreamFields").classList.toggle("hidden", !xtream);
+  $("macSourceUrl").required = assign;
+  $("macSourceUsername").required = assign && xtream;
+  $("macSourcePassword").required = assign && xtream;
+  $("macSourceUrlLabel").textContent = xtream ? "Server URL" : "M3U URL";
+}
+function resetMacForm(device = null) {
+  macEditing = device;
+  macExpiryDirty = false;
+  $("macFormTitle").textContent = device ? "Edit MAC device" : "Add MAC device";
+  $("macClientName").value = device?.name || "";
+  $("macAddress").value = device?.mac || "";
+  $("macAddress").readOnly = !!device;
+  $("macAssignSource").checked = !device;
+  $("macSourceType").value = device?.source_type || "m3u";
+  ["macSourceUrl", "macSourceUsername", "macSourcePassword"].forEach(id => { $(id).value = ""; });
+  $("macValidity").value = device?.expires_at ? "custom" : "none";
+  $("macExpires").value = macLocalDate(device?.expires_at);
+  $("macEnabled").checked = device ? !!device.enabled : true;
+  updateMacSourceFields();
+}
+function renderMacDevices() {
+  const search = $("macSearch").value.trim().toLowerCase();
+  const compact = search.replace(/[:-]/g, "");
+  const platform = $("macPlatform").value;
+  const rows = macDevices.filter(device => {
+    const android = /^Android /i.test(device.app_version || "");
+    return (platform === "all" || (platform === "android" ? android : !android)) &&
+      (!search || device.name.toLowerCase().includes(search) || device.mac.toLowerCase().replace(/:/g, "").includes(compact));
+  });
+  $("macDeviceRows").replaceChildren();
+  const date = value => value ? new Date(value).toLocaleString() : "No expiry";
+  for (const device of rows) {
+    const tr = document.createElement("tr");
+    const values = [device.name, device.mac, /^Android /i.test(device.app_version || "") ? "Android" : "LG / other",
+      device.has_source ? (device.source_type || "").toUpperCase() : "Not assigned", macDeviceStatus(device), date(device.expires_at)];
+    for (const value of values) { const td = document.createElement("td"); td.textContent = value; tr.appendChild(td); }
+    const actions = document.createElement("td");
+    const edit = document.createElement("button"); edit.type = "button"; edit.className = "secondary"; edit.textContent = "Edit"; edit.disabled = macBusy;
+    edit.addEventListener("click", () => { if (macBusy) return; resetMacForm(device); $("macDeviceForm").scrollIntoView({ behavior: "smooth", block: "start" }); });
+    const toggle = document.createElement("button"); toggle.type = "button"; toggle.textContent = device.enabled ? "Pause" : "Activate"; toggle.className = device.enabled ? "danger" : ""; toggle.disabled = macBusy;
+    toggle.addEventListener("click", () => toggleMacDevice(device));
+    actions.appendChild(edit); actions.appendChild(toggle); tr.appendChild(actions); $("macDeviceRows").appendChild(tr);
+  }
+  if (!rows.length) {
+    const tr = document.createElement("tr"); const td = document.createElement("td"); td.colSpan = 7;
+    td.textContent = macDevices.length ? "No matching MAC devices." : "No MAC devices added yet.";
+    tr.appendChild(td); $("macDeviceRows").appendChild(tr);
+  }
+}
+async function loadMacDevices() {
+  const result = await macRpc("bliz_panel_list");
+  if (!Array.isArray(result?.devices)) throw new Error("Invalid MAC device list response.");
+  macDevices = result.devices;
+  renderMacDevices();
+}
+function macFormPayload() {
+  const mac = formatMacAddress($("macAddress").value);
+  const name = $("macClientName").value.trim();
+  if (!/^([A-F0-9]{2}:){5}[A-F0-9]{2}$/.test(mac)) throw new Error("Enter the complete MAC / ID from BLiZ TV.");
+  if (!name || name.length > 120) throw new Error("Enter a client / device name.");
+  const payload = { action: macEditing ? "update" : "create", mac, name, enabled: $("macEnabled").checked };
+  if (macEditing) payload.revision = macEditing.revision;
+  if (!macEditing || macExpiryDirty) {
+    const expires = $("macExpires").value;
+    if (expires && !Number.isFinite(new Date(expires).getTime())) throw new Error("Enter a valid expiry date.");
+    payload.expires_at = expires ? new Date(expires).toISOString() : null;
+  }
+  if ($("macAssignSource").checked) {
+    const type = $("macSourceType").value;
+    const url = $("macSourceUrl").value.trim();
+    let parsed; try { parsed = new URL(url); } catch { throw new Error("Enter a valid HTTP/HTTPS playlist or server URL."); }
+    if (!["http:", "https:"].includes(parsed.protocol) || parsed.username || parsed.password || url.length > 8192) throw new Error("Enter a valid HTTP/HTTPS source URL.");
+    if (!["m3u", "xtream"].includes(type)) throw new Error("Select M3U or Xtream.");
+    payload.source = { type, url };
+    if (type === "xtream") {
+      const username = $("macSourceUsername").value.trim(); const password = $("macSourcePassword").value;
+      if (!username || !password || username.length > 512 || password.length > 512) throw new Error("Enter the Xtream username and password.");
+      payload.source.username = username; payload.source.password = password;
+    }
+  }
+  return payload;
+}
+async function saveMacDevice(event) {
+  event.preventDefault();
+  if (macBusy) return;
+  let payload;
+  try { payload = macFormPayload(); } catch (error) { $("macMessage").textContent = error.message; return; }
+  setMacBusy(true); $("macMessage").textContent = "Saving MAC activation…";
+  try {
+    const result = await macRpc("bliz_panel_save", { p_device: payload });
+    if (!result?.ok) throw new Error("The device was not saved.");
+    resetMacForm();
+    $("macMessage").textContent = "MAC device saved. BLiZ TV checks for the assigned playlist every minute.";
+    try { await loadMacDevices(); } catch { $("macMessage").textContent += " Refresh devices to see the updated list."; }
+  } catch (error) { $("macMessage").textContent = error.message + " Refresh devices before retrying if the request was interrupted."; }
+  finally { setMacBusy(false); }
+}
+async function toggleMacDevice(device) {
+  if (macBusy) return;
+  setMacBusy(true);
+  try {
+    const result = await macRpc("bliz_panel_save", { p_device: { action: "update", mac: device.mac, revision: device.revision, enabled: !device.enabled } });
+    if (!result?.ok) throw new Error("The device status was not saved.");
+    $("macMessage").textContent = device.enabled ? "MAC device paused." : "MAC device activated.";
+    await loadMacDevices();
+  } catch (error) { $("macMessage").textContent = error.message; }
+  finally { setMacBusy(false); }
+}
+$("macDeviceForm").addEventListener("submit", saveMacDevice);
+$("macAddress").addEventListener("input", event => { event.target.value = formatMacAddress(event.target.value); });
+$("macAssignSource").addEventListener("change", updateMacSourceFields);
+$("macSourceType").addEventListener("change", updateMacSourceFields);
+$("macValidity").addEventListener("change", () => {
+  macExpiryDirty = true;
+  if ($("macValidity").value !== "custom") $("macExpires").value = macPeriodExpiry($("macValidity").value);
+});
+$("macExpires").addEventListener("input", () => { macExpiryDirty = true; $("macValidity").value = $("macExpires").value ? "custom" : "none"; });
+$("newMacButton").addEventListener("click", () => { if (!macBusy) { resetMacForm(); $("macMessage").textContent = ""; $("macDeviceForm").scrollIntoView({ behavior: "smooth", block: "start" }); } });
+$("cancelMacButton").addEventListener("click", () => { if (!macBusy) resetMacForm(); });
+$("refreshMacButton").addEventListener("click", async () => {
+  if (macBusy) return; setMacBusy(true);
+  try { await loadMacDevices(); $("macMessage").textContent = "MAC devices updated."; }
+  catch (error) { $("macMessage").textContent = error.message; }
+  finally { setMacBusy(false); }
+});
+$("macSearch").addEventListener("input", renderMacDevices);
+$("macPlatform").addEventListener("change", renderMacDevices);
+$("openMacSectionButton").addEventListener("click", () => { $("macActivationSection").scrollIntoView({ behavior: "smooth", block: "start" }); });
+resetMacForm();
+
+function scrollUnifiedSection() {
+  const id = location.hash.slice(1);
+  if (!["macActivationSection","clientSection","activationSection","resellersSection","creditsSection","iptvTrialSection","historySection"].includes(id)) return;
+  requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({block:"start"}));
+}
+window.addEventListener("hashchange",scrollUnifiedSection);
+if(window.self !== window.top) document.documentElement.classList.add("embedded-admin");
 const originalShowDashboard = showDashboard;
 const originalShowLogin = showLogin;
 
@@ -722,6 +965,9 @@ showDashboard = function() {
   $("createResellerSection").classList.remove("hidden");
   $("historySection").classList.remove("hidden");
   $("activationSection").classList.remove("hidden");
+  $("macActivationSection").classList.remove("hidden");
+  loadMacDevices().catch(error => { $("macMessage").textContent = error.message; });
+  scrollUnifiedSection();
   loadActivationCodes().catch(error => { $("codeMessage").textContent = error.message; });
   loadCreditHistory().catch(error => message(error.message));
 };
@@ -731,6 +977,8 @@ showLogin = function() {
   $("createResellerSection").classList.add("hidden");
   $("historySection").classList.add("hidden");
   $("activationSection").classList.add("hidden");
+  $("macActivationSection").classList.add("hidden");
+  macDevices = []; resetMacForm(); $("macDeviceRows").replaceChildren(); $("macMessage").textContent = "";
   $("generatedCodeArea").classList.add("hidden");
   $("adminGeneratedCode").value = "";
   $("activationCards").replaceChildren();
@@ -765,5 +1013,3 @@ $("logoutButton").addEventListener("click", async () => {
 </script>
 </body>
 </html>
-
-
